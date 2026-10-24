@@ -176,16 +176,33 @@ div.row{cursor:default}.row .n{width:130px}.row .c{width:78px}
 @media (min-width:1200px){.wa{display:grid;grid-template-columns:repeat(5,1fr);gap:34px;padding:0 9px;text-align:center}.wa.r span{grid-column:5}.wa.l span{grid-column:1}.ws.rev{direction:rtl}.ws.rev .wb{direction:ltr}.ws.rev .wb:not(:last-child)::after{content:"←";right:auto;left:-25px}}
 #chart svg{display:block;width:100%;height:auto;font-family:var(--f)}
 @media (max-width:620px){.row .n{width:96px}.row .c{width:66px}.ctl{flex-wrap:wrap}.ctl label{flex-basis:100%}}
+.tab{flex:none;font:inherit;font-size:15px;font-weight:800;cursor:pointer;background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 16px}
+.tab[data-t=design]{--c:var(--navy)}.tab[data-t=report]{--c:var(--teal)}
+.tab:hover{border-color:var(--c)}.tab.on{background:var(--c);border-color:var(--c);color:#fff}.tab:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.links{display:contents}.links[data-tab=design]{--ac:var(--navy)}.links[data-tab=report]{--ac:var(--teal)}
+.links a{font-size:13.5px;font-weight:600;color:var(--mut);padding:5px 12px}
+.pane code{font-size:.92em;background:var(--sub);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere}
+.pane pre{background:var(--sub);border:1px solid var(--line);border-radius:12px;padding:12px 16px;overflow-x:auto;font-size:14px;line-height:1.5}.pane pre code{background:none;padding:0;overflow-wrap:normal}
+.pill.p{background:var(--amber);color:var(--amber-ink)}
+.callout a{color:inherit;font-weight:700;text-decoration:underline}
+@media (min-width:1280px){
+main>nav{gap:8px}
+.tab{border-radius:12px;font-size:16px;padding:12px 16px;text-align:left;border-left:8px solid var(--c)}
+.links{display:flex;flex-direction:column;gap:2px;margin:0 0 8px 12px;padding-left:12px;border-left:3px solid var(--ac)}
+main>nav .links a{background:none;border:0;border-radius:8px;font-size:14.5px;font-weight:600;color:var(--mut);padding:6px 10px}
+main>nav .links a:hover,main>nav .links a:focus-visible{background:var(--soft);color:var(--head)}
+}
 </style>
 </head><body>
 <a href="https://bagusbernadi.github.io/" style="display:inline-block;margin:12px 16px;font:600 14px/1.4 'Source Sans 3',Arial,sans-serif;color:#1A73E8;text-decoration:none">← All projects / Semua project</a>
 <main>
-<nav aria-label="Section navigation"><a href="#s1">Background</a><a href="#s2">Business Questions</a><a href="#s3">Threshold Rule</a><a href="#s4">Dataset</a><a href="#s5">Tools</a><a href="#s6">Work Plan</a><a href="#s7">Project Outputs</a><a href="#s8">Success Criteria</a><a href="#s9">Assumptions &amp; Limitations</a></nav>
+<nav aria-label="Project navigation"><button type="button" class="tab on" data-t="design" aria-expanded="true" aria-controls="design">Design Project</button><div class="links" data-tab="design"><a href="#s1">Background</a><a href="#s2">Business Questions</a><a href="#s3">Threshold Rule</a><a href="#s4">Dataset</a><a href="#s5">Tools</a><a href="#s6">Work Plan</a><a href="#s7">Project Outputs</a><a href="#s8">Success Criteria</a><a href="#s9">Assumptions &amp; Limitations</a></div><button type="button" class="tab" data-t="report" aria-expanded="false" aria-controls="report">Report Project</button><div class="links" data-tab="report" hidden><a href="#rp1">Problem</a><a href="#rp2">Data</a><a href="#rp3">Analysis</a><a href="#rp4">Recommendation</a><a href="#rp5">Impact</a><a href="#rp6">Batasan</a></div></nav>
 
 <header class="banner"><h1>Project 28: Predictive Maintenance Failure Analysis</h1>
 <p class="goal"><b>Tujuan project:</b> menganalisis data operasi mesin publik untuk menemukan kondisi dan jenis kegagalan yang paling sering menyebabkan mesin rusak, lalu merumuskan aturan ambang sederhana yang terukur ketepatannya, agar jadwal inspeksi dan penggantian alat bisa ditentukan sebelum kerusakan terjadi.</p>
 <div class="tags"><span class="tlab">Kategori:</span><span class="tag a">Rancangan project</span><span class="tag c1">Perawatan mesin</span><span class="tag c2">Dataset publik (sintetis)</span><span class="tag c3">SQL + dashboard</span></div></header>
 
+<div class="pane" id="design" data-tab="design">
 <section class="card intro">
 <h3>Project Introduction</h3>
 <p>Bayangkan pemilik usaha ojek dengan puluhan motor. Setiap hari ia mencatat jenis motor, suhu mesin, putaran mesin, beban yang dibawa, dan sudah berapa lama kampas rem dipakai. Sesekali motor mogok di jalan, dan penyebabnya berbeda-beda: kampas habis, mesin terlalu panas, atau beban terlalu berat.</p>
@@ -456,6 +473,41 @@ div.row{cursor:default}.row .n{width:130px}.row .c{width:78px}
 <p><b>Kelas sangat tidak seimbang.</b> Hanya sekitar 3% run yang gagal, sehingga akurasi tinggi tidak berarti aturan berguna.</p>
 <p><b>Jenis kegagalan bisa tumpang tindih.</b> Satu run bisa punya lebih dari satu jenis kegagalan, dan kegagalan acak (RNF) memang tidak bisa diprediksi.</p>
 <p><b>Pola belum tentu penyebab.</b> Ambang yang ditemukan adalah pola dalam data. Penerapan di mesin nyata tetap perlu diuji di lapangan.</p></details></div></div>
+</div>
+
+<div class="pane" id="report" data-tab="report" hidden>
+<div class="callout a"><h4>Status Report Project</h4><p>Laporan hasil diisi setelah analisis dikerjakan. Sudah ditulis: Problem, Data, Analysis, Recommendation, Impact, Batasan. Rancangan lengkap ada di tab <a href="#design">Design Project</a>.</p></div>
+<div class="scroll"><table><tr><th>Bagian</th><th>Status</th></tr>
+<tr><td><b>Problem</b></td><td><span class="pill">Draft</span></td></tr>
+<tr><td><b>Data</b></td><td><span class="pill">Draft</span></td></tr>
+<tr><td><b>Analysis</b></td><td><span class="pill">Draft</span></td></tr>
+<tr><td><b>Recommendation</b></td><td><span class="pill">Draft</span></td></tr>
+<tr><td><b>Impact</b></td><td><span class="pill">Draft</span></td></tr>
+<tr><td><b>Batasan</b></td><td><span class="pill">Draft</span></td></tr>
+</table></div>
+
+<h2 id="rp1">1. Problem<small>Pertanyaan yang ingin dijawab</small></h2>
+<div class="card"><p><b>Pertanyaan utama:</b> Kondisi operasi dan jenis kegagalan apa yang paling sering menyebabkan mesin rusak, dan pada ambang berapa risikonya naik?</p>
+<p>Rancangan memecahnya menjadi 14 pertanyaan (9 Utama, 4 Pendukung, 1 Tambahan) dalam 5 tema: kegagalan, kondisi, aturan ambang, penerapan, serta data dan validitas.</p></div>
+
+<h2 id="rp2">2. Data<small>Sumber, ukuran, dan perlakuan awal</small></h2>
+<div class="card"><ul class="tight"><li>Sumber data: <a href="https://archive.ics.uci.edu/dataset/601" target="_blank" rel="noopener">here</a> (Versi: UCI 2020, Tanggal akses: 24 Oktober 2026)</li><li>Ukuran (perkiraan, <b>belum diverifikasi</b>): ±10.000 baris, 14 kolom, sekitar 3% run berlabel gagal. Angka ini dicek saat data diunduh.</li><li>Data sintetis: dibuat penyusun dataset untuk meniru kondisi mesin nyata. Semua angka dampak diberi label <code>simulated</code>.</li><li>Lisensi dan sitasi: dicek di halaman dataset sebelum project dipublikasikan.</li><li>Data mentah tidak di-commit ke repository. Cara mengunduhnya akan ditulis di <code>data/README.md</code>.</li><li>Rencana tabel: <code>raw_ai4i</code>, <code>features</code>, <code>failure_mode_long</code>, <code>rule_eval</code>.</li></ul></div>
+
+<h2 id="rp3">3. Analysis<small>Hasil perhitungan dari data</small></h2>
+<div class="card"><p>Belum dikerjakan. Setiap aturan ambang dinilai dengan precision, recall, dan proporsi peringatan, lalu dibandingkan dengan baseline yang tidak pernah memberi peringatan.</p>
+<p>Hipotesis yang akan diuji (belum terbukti): 1. Failure rate naik tajam setelah tool wear melewati sekitar 200 menit. 2. Tipe produk L lebih sering gagal dibanding tipe M dan H. 3. Selisih suhu proses dan udara yang kecil, ditambah putaran rendah, terkait dengan kegagalan panas. 4. Power yang terlalu rendah atau terlalu tinggi terkait dengan kegagalan daya. 5. Kombinasi torque tinggi dan tool wear tinggi mendahului overstrain, dengan batas yang berbeda per tipe produk.</p></div>
+
+<h2 id="rp4">4. Recommendation<small>Tindakan yang disarankan dari temuan</small></h2>
+<div class="card"><p>Belum dikerjakan. Output yang direncanakan: usulan jadwal inspeksi dan penggantian alat berdasarkan ambang tool wear dan torque, beserta trade-off-nya.</p></div>
+
+<h2 id="rp5">5. Impact<small>Seberapa besar manfaatnya</small></h2>
+<div class="card"><p>Belum dikerjakan. Rumus yang akan dipakai (semua hasil diberi label <code>estimated</code> dan <code>simulated</code>):</p>
+<pre><code>Downtime terhindari = (failure rate lama − failure rate baru) × jumlah run × biaya per kejadian</code></pre>
+<p>Asumsi biaya per kejadian ditulis eksplisit, bukan angka nyata.</p></div>
+
+<h2 id="rp6">6. Batasan yang sudah diketahui<small>Hal yang perlu diwaspadai saat membaca hasil</small></h2>
+<div class="card"><ul class="tight"><li>Data sintetis, polanya bisa lebih rapi dari kondisi nyata.</li><li>Kegagalan sangat jarang, sehingga akurasi tinggi tidak berarti aturan berguna.</li><li>Satu run bisa punya lebih dari satu jenis kegagalan, dan kegagalan acak (RNF) tidak bisa diprediksi.</li><li>Pola belum tentu penyebab; ambang perlu diuji di lapangan.</li></ul></div>
+</div>
 </main>
 
 <script>
@@ -486,6 +538,14 @@ addEventListener('scroll',()=>tip.style.display='none',{passive:true});
 const qg=$('qg');document.querySelector('.fbar').onclick=e=>{const b=e.target.closest('.fb');if(!b)return;const f=b.dataset.f;
 document.querySelectorAll('.fb').forEach(x=>x.classList.toggle('on',x==b));let th=null,vis=0;
 [...qg.children].forEach(el=>{if(el.classList.contains('theme')){if(th)th.hidden=!vis;th=el;vis=0}else{const show=f=='*'||el.dataset.p==f;el.hidden=!show;if(show)vis++}});if(th)th.hidden=!vis};
-let seen=new Set();[...document.querySelector('main').children].forEach(el=>{if(el.tagName=='H2')seen=new Set();hl(el,seen)});
+let seen=new Set();document.querySelectorAll('main>.pane>*').forEach(el=>{if(el.tagName=='H2')seen=new Set();hl(el,seen)});
+
+const TB=[...document.querySelectorAll('.tab')];
+function setTab(t){document.querySelectorAll('.pane,.links').forEach(e=>e.hidden=e.dataset.tab!==t);TB.forEach(x=>{const on=x.dataset.t===t;x.classList.toggle('on',on);x.setAttribute('aria-expanded',on)})}
+function route(){const h=decodeURIComponent(location.hash.slice(1)),el=h&&document.getElementById(h);
+if(h=='design'||h=='report'){setTab(h);scrollTo(0,0);return}
+if(el){const p=el.closest('.pane');if(p){setTab(p.dataset.tab);el.scrollIntoView()}}}
+TB.forEach(x=>x.onclick=()=>{location.hash=x.dataset.t});
+addEventListener('hashchange',route);route();
 </script>
 </body></html>

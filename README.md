@@ -24,7 +24,7 @@ Rancangan memecahnya menjadi 14 pertanyaan (9 Utama, 4 Pendukung, 1 Tambahan) da
 - Sumber data: [here](https://archive.ics.uci.edu/dataset/601) (Versi: UCI 2020, Tanggal akses: 24 Oktober 2026)
 - Ukuran (perkiraan, **belum diverifikasi**): ±10.000 baris, 14 kolom, sekitar 3% run berlabel gagal. Angka ini dicek saat data diunduh.
 - Data sintetis: dibuat penyusun dataset untuk meniru kondisi mesin nyata. Semua angka dampak diberi label `simulated`.
-- Lisensi dan sitasi: dicek di halaman dataset sebelum project dipublikasikan.
+- Lisensi: CC BY 4.0 (halaman UCI, dicek 28 Oktober 2026). Sitasi: AI4I 2020 Predictive Maintenance Dataset, UCI Machine Learning Repository, DOI https://doi.org/10.24432/C5HS5C (teks sitasi lengkap tersedia di halaman UCI). Data sintetis, bukan dari mesin nyata.
 - Data mentah tidak di-commit ke repository. Cara mengunduhnya akan ditulis di `data/README.md`.
 - Rencana tabel: `raw_ai4i`, `features`, `failure_mode_long`, `rule_eval`.
 

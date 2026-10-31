@@ -1,0 +1,3 @@
+aturan,pembanding,status
+tool wear >= T (200 menit),SQL vs Python,PASS
+"tool wear >= Tw dan torque >= Tq (200 menit, 45 Nm)",SQL vs Python,PASS

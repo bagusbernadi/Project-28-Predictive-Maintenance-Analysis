@@ -1,0 +1,2 @@
+runs,failures,failure_rate,baseline_accuracy,final_rule,final_precision_test,final_recall_test,final_alert_test,final_accuracy_test
+10000,339,0.0339,0.9661,"wear x torque: L=11000, M=10500, H=11000 minNm | suhu-rpm: 9.5 K, 1380 rpm | torque: 55 Nm",0.26470588,0.79411765,0.102,0.918

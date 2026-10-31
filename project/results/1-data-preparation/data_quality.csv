@@ -1,0 +1,33 @@
+ukuran,nilai
+baris,10000.0
+kolom,14.0
+sel kosong,0.0
+udi duplikat,0.0
+product_id duplikat,0.0
+baris duplikat (semua kolom selain id),0.0
+run L,6000.0
+run M,2997.0
+run H,1003.0
+machine_failure = 1,339.0
+machine_failure = 1 tanpa jenis kegagalan,9.0
+jenis kegagalan = 1 tetapi machine_failure = 0,18.0
+  di antaranya RNF,18.0
+run dengan lebih dari satu jenis kegagalan,24.0
+suhu udara minimum (K),295.3
+suhu udara maksimum (K),304.5
+suhu proses minimum (K),305.7
+suhu proses maksimum (K),313.8
+rpm minimum,1168.0
+rpm maksimum,2886.0
+torque minimum (Nm),3.8
+torque maksimum (Nm),76.6
+tool wear minimum (menit),0.0
+tool wear maksimum (menit),253.0
+suhu proses <= suhu udara,0.0
+ukuran zip (byte),522170.0
+ukuran csv (byte),522048.0
+TWF = 1,46.0
+HDF = 1,115.0
+PWF = 1,95.0
+OSF = 1,98.0
+RNF = 1,19.0

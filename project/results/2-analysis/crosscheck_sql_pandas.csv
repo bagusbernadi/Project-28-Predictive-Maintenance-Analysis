@@ -1,0 +1,18 @@
+pemeriksaan,nilai_dibandingkan,selisih_maks,status
+failure rate per tipe: n,3,0.0,PASS
+failure rate per tipe: gagal,3,0.0,PASS
+jenis TWF: flag dan flag dengan gagal,2,0.0,PASS
+jenis HDF: flag dan flag dengan gagal,2,0.0,PASS
+jenis PWF: flag dan flag dengan gagal,2,0.0,PASS
+jenis OSF: flag dan flag dengan gagal,2,0.0,PASS
+jenis RNF: flag dan flag dengan gagal,2,0.0,PASS
+bucket tool wear: n,11,0.0,PASS
+bucket tool wear: gagal,11,0.0,PASS
+heatmap torque x rpm: n,17,0.0,PASS
+heatmap torque x rpm: gagal,17,0.0,PASS
+selisih suhu: total HDF dan n,2,0.0,PASS
+selisih suhu: HDF pada rpm < 1380,1,0.0,PASS
+power: total PWF dan n,2,0.0,PASS
+power: PWF di luar 3.500-9.000 W,1,0.0,PASS
+OSF per tipe,3,0.0,PASS
+OSF: jumlah run per tipe,3,0.0,PASS

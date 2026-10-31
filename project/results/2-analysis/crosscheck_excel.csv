@@ -1,0 +1,16 @@
+pemeriksaan,nilai_sql_python,nilai_excel,status
+run tipe L,6000,6000,PASS
+gagal tipe L,235,235,PASS
+run tipe M,2997,2997,PASS
+gagal tipe M,83,83,PASS
+run tipe H,1003,1003,PASS
+gagal tipe H,21,21,PASS
+gagal semua,339,339,PASS
+tool wear >= 200: TP,123,123,PASS
+tool wear >= 200: FP,678,678,PASS
+tool wear >= 200: FN,216,216,PASS
+tool wear >= 200: TN,8983,8983,PASS
+aturan terpilih (semua data): TP,258,258,PASS
+aturan terpilih (semua data): FP,715,715,PASS
+aturan terpilih (semua data): FN,81,81,PASS
+aturan terpilih (semua data): TN,8946,8946,PASS

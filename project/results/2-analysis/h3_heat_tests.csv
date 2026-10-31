@@ -1,0 +1,4 @@
+definisi_kecil_rendah,batas_selisih_suhu_k,batas_rpm,n_kelompok,hdf_kelompok,rate_kelompok,rate_lainnya,rasio,recall_hdf,p_fisher
+kuartil terbawah (25%),9.3,1423.0,647,115,0.17774343,0.0,,1.0,7.152746777504501e-142
+sepertiga terbawah (33%),9.4,1449.0,1142,115,0.10070053,0.0,,1.0,2.1716847329262736e-111
+separuh terbawah (50%),9.8,1503.0,2513,115,0.04576204,0.0,,1.0,1.4370488459893783e-70

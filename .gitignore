@@ -1,0 +1,9 @@
+# data mentah dan database tidak di-commit (dibuat ulang dari skrip)
+project/data/raw/
+project/*.duckdb
+project/*.duckdb.wal
+project/results/2-analysis/crosscheck.xlsx
+project/results/2-analysis/.final_mask.npy
+__pycache__/
+*.pyc
+.ipynb_checkpoints/

@@ -1,0 +1,551 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Project 28: Predictive Maintenance Failure Analysis</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Rancangan project portofolio Data Analyst: analisis kegagalan mesin dari dataset publik AI4I 2020 dan aturan ambang yang dinilai dengan precision dan recall.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: tema terang ala Google (single theme, sengaja): latar putih keabuan, kartu putih;
+   biru = struktur, kuning = penanda utama, hijau = info pendukung, merah = aksen.
+   Skala huruf: H1 32 · H2 25 · H3 19 · body 16.5 · keterangan 14 · label 12.5 */
+:root{color-scheme:light;
+--bg:#F8F9FA;--card:#FFFFFF;--sub:#F1F3F4;--line:#DADCE0;
+--ink:#202124;--head:#174EA6;--mut:#5F6368;
+--navy:#1A73E8;--navy-ink:#FFFFFF;--teal:#188038;--amber:#FBBC04;--amber-ink:#3C2A00;--bar:#1A73E8;--soft:#E8F0FE;
+--gb:#4285F4;--gr:#EA4335;--gy:#FBBC04;--gg:#34A853;
+--navyH:#1A73E8;--amberH:#B06000;--tealH:#188038;--plumH:#9334E6;--roseH:#D93025;--skyH:#1967D2;--onph:#fff;
+--f:"Source Sans 3",Calibri,Carlito,"Segoe UI",Arial,sans-serif;
+--h1:clamp(26px,2.6vw,32px);--h2:clamp(21px,2vw,25px);--h3:19px;--body:16.5px;--small:14px;--label:12.5px}
+[hidden]{display:none!important}
+*{box-sizing:border-box}html{scroll-padding-top:64px;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--body)/1.6 var(--f)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+main{max-width:880px;margin:0 auto;padding-block:16px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+b,strong{font-weight:700}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);padding:8px 0;display:flex;gap:6px;overflow-x:auto}
+nav a{flex:none;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;border-radius:999px;padding:6px 14px;font-size:var(--small);font-weight:600}
+nav a:hover,nav a:focus-visible{background:var(--amber);border-color:var(--amber);color:var(--amber-ink);outline:none}
+.banner{background:var(--navy);color:var(--navy-ink);border-radius:18px;padding:22px 26px}
+.banner h1{margin:0 0 8px;font-size:var(--h1);font-weight:800;line-height:1.2;text-wrap:balance;letter-spacing:-.01em}.banner p{margin:0;font-size:18px;line-height:1.55;opacity:.97}.banner .goal b{font-weight:800}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.tags{align-items:center}.tlab{font-size:var(--small);font-weight:700;margin-right:4px;opacity:.95}
+.tag{border-radius:999px;padding:3px 12px;font-size:var(--label);font-weight:700;background:rgba(255,255,255,.2);letter-spacing:.02em}.tag.a{background:var(--amber);color:var(--amber-ink)}
+.card{border-radius:16px;padding:16px 20px;background:var(--card);border:1px solid var(--line);margin:12px 0}
+.card p{margin:8px 0}
+h2{font-size:var(--h2);font-weight:800;color:var(--head);margin:48px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--line);line-height:1.25;text-wrap:balance}
+h2 small{display:block;font-size:var(--small);font-weight:400;color:var(--mut);margin-top:4px}
+h3{font-size:var(--h3);font-weight:700;color:var(--head);margin:16px 0 6px;line-height:1.3}
+.card h3:first-child,.card>div>h3:first-child{margin-top:4px}
+.add{display:inline-block;vertical-align:middle;margin-left:8px;border-radius:999px;padding:2px 10px;font-size:var(--label);font-weight:700;background:var(--teal);color:#fff}
+.how{background:var(--soft);border-radius:12px;padding:12px 16px;margin:10px 0;font-size:var(--small);line-height:1.55;color:var(--ink)}.how::before{content:"Cara membaca ";font-weight:700;color:var(--teal)}
+.callout{border-radius:14px;padding:14px 20px;margin:12px 0;font-size:16px}.callout h4{margin:0 0 6px;font-size:var(--h3);font-weight:700}.callout p{margin:6px 0}
+.callout.a{background:var(--amber);color:var(--amber-ink)}.callout.g{background:var(--teal);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}.kpis .card{margin:0}
+.kpi .v{font-size:30px;font-weight:800;display:block;line-height:1.15;color:var(--head);font-variant-numeric:tabular-nums}.kpi .l{display:block;font-weight:700;font-size:16px;margin-top:2px}.kpi .d{display:block;font-size:var(--small);line-height:1.4;margin-top:6px;color:var(--mut)}
+.kpi.t{background:var(--teal);border-color:var(--teal);color:#fff}.kpi.am{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
+.kpi.t .v,.kpi.t .d,.kpi.am .v,.kpi.am .d{color:inherit}
+table{border-collapse:collapse;width:100%;font-size:15px;background:var(--card);border-radius:12px;overflow:hidden}
+th{background:var(--navy);color:var(--navy-ink);padding:9px 12px;text-align:left;vertical-align:top;font-weight:700}
+td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(odd) td{background:var(--sub)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+.q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:6px 0;display:grid;grid-template-columns:40px 1fr;gap:4px 8px;font-size:16px;line-height:1.45}
+.q .id{font-weight:800;color:var(--head)}.q .m{grid-column:2;font-size:var(--small);color:var(--mut)}
+.pri{display:inline-block;border-radius:999px;padding:1px 9px;font-size:var(--label);font-weight:700;margin-left:6px;background:var(--sub);border:1px solid var(--line);color:var(--mut)}.pri.M{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}.pri.S{background:var(--navy);border-color:var(--navy);color:#fff}
+.theme{font-size:var(--label);font-weight:700;color:var(--teal);margin:20px 0 4px;text-transform:uppercase;letter-spacing:.08em}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}
+.flow span{border-radius:999px;padding:5px 12px;font-size:var(--small);font-weight:700;background:var(--sub);border:1px solid var(--line)}
+.flow span.ng{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}.flow span.ok{background:var(--teal);border-color:var(--teal);color:#fff}.flow i{font-style:normal;color:var(--mut);font-size:var(--small)}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;width:100%;font:inherit;font-size:var(--small);color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.row .n{width:96px;flex:none;font-weight:600}.row .tr{flex:1;background:var(--sub);border-radius:8px;height:24px;position:relative;overflow:hidden}
+.row .b{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:var(--bar);transition:width .25s}
+.row.sel .b{background:var(--amber)}.row.sel .n{color:var(--head);font-weight:800}
+.row .c{width:58px;text-align:right;flex:none;font-variant-numeric:tabular-nums;font-weight:600}
+.row:focus-visible{outline:3px solid var(--amber);outline-offset:2px;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:12px;margin:14px 0 10px;font-weight:700;font-size:15px}.ctl input{flex:1;accent-color:#F2A541}.ctl output{min-width:48px;text-align:right}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.res div{background:var(--sub);border-radius:12px;padding:10px 14px;font-size:var(--small);color:var(--mut)}.res b{display:block;font-size:24px;font-weight:800;color:var(--head);font-variant-numeric:tabular-nums}
+.steps{counter-reset:s;display:grid;gap:8px;margin:10px 0;padding:0;list-style:none}
+.steps li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 54px;position:relative}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:12px;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px}
+.steps li.L::before{background:var(--amber);color:var(--amber-ink)}
+.steps b.t{display:block;font-size:17px;color:var(--head);line-height:1.3}.steps p{margin:6px 0;font-size:15px;line-height:1.5}.steps .meta{font-size:13px;color:var(--mut)}
+.phase{font-size:var(--label);font-weight:700;color:var(--teal);margin:18px 0 0;text-transform:uppercase;letter-spacing:.08em}
+.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0}.tools .card{margin:0}
+.tools b{display:block;font-size:var(--h3);color:var(--head)}.tools .r{font-size:15px;margin:6px 0 0}.tools .alt{font-size:var(--small);color:var(--mut);margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--line)}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:8px 0}summary{cursor:pointer;font-weight:700;font-size:17px;color:var(--head)}details p{font-size:15.5px}
+.pill{border-radius:999px;padding:1px 9px;font-size:var(--label);font-weight:700;background:var(--teal);color:#fff;margin-left:4px}.pill.d{background:var(--sub);border:1px solid var(--line);color:var(--mut)}
+.chip{display:inline-block;border-radius:999px;padding:3px 11px;margin:3px 4px 3px 0;font-size:var(--small);font-weight:600;background:var(--sub);border:1px solid var(--line)}
+.tm{border-bottom:2px dotted var(--amber);background:rgba(242,165,65,.16);border-radius:4px;padding:0 2px;cursor:help}
+#tip{position:fixed;display:none;max-width:320px;white-space:pre-line;background:#202124;color:#fff;padding:10px 12px;border-radius:12px;font-size:var(--small);line-height:1.4;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+ul.tight{margin:6px 0;padding-left:20px}ul.tight li{margin:5px 0}
+.intro>.layout{grid-column:1/-1}
+.layout{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.layout .lead{margin:4px 0 10px;max-width:90ch}
+.figw{overflow-x:auto;margin:8px 0}.figw svg{display:block;width:100%;min-width:860px;height:auto;font-family:var(--f)}
+.figw .lane{fill:var(--sub)}.figw .box{fill:var(--card);stroke:var(--line);stroke-width:1.5}.figw .box.hi{stroke:var(--bar);stroke-width:2.5}
+.figw text{fill:var(--ink)}.figw .ln{font-size:15px;font-weight:700;fill:var(--head)}.figw .gl{font-size:13px;font-weight:700;fill:var(--teal);letter-spacing:.03em}
+.figw .bt{font-size:13px}.figw .b{font-size:15px;font-weight:700}.figw .st{font-size:13px;fill:var(--mut)}
+.figw .grp{stroke:var(--teal);stroke-width:2}.figw .ar{stroke:var(--bar);stroke-width:2}.figw .ah{fill:var(--bar)}
+.figw .ng,.figw .ngs{stroke:var(--amber);stroke-width:2;stroke-dasharray:5 4}.figw .aha{fill:var(--amber)}.figw .nl{font-size:14px;font-weight:700;fill:var(--amberH)}
+.figw .dt{stroke:var(--mut);stroke-width:2;stroke-dasharray:2 4}
+.figw .okb{fill:var(--teal)}.figw .scb{fill:var(--amber)}.figw .wt{fill:#fff;font-size:14px;font-weight:700}.figw .at{fill:var(--amber-ink);font-size:14px;font-weight:700}
+.figw .mk{fill:var(--amber)}.figw .mt{fill:var(--amber-ink);font-size:14px;font-weight:800}
+.legend{counter-reset:l;list-style:none;padding:0;margin:10px 0 0;display:grid;gap:10px}
+.legend li{counter-increment:l;position:relative;padding-left:38px;font-size:15.5px;line-height:1.55}
+.legend li::before{content:counter(l);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;background:var(--amber);color:var(--amber-ink);font-weight:800;font-size:14px;display:grid;place-items:center}
+@media (min-width:1000px){.legend{grid-template-columns:repeat(4,1fr);gap:16px}}
+.kpi{--h:var(--navyH);background:color-mix(in srgb,var(--h) 11%,var(--card));border-color:color-mix(in srgb,var(--h) 35%,var(--card))}
+.kpi .v{color:var(--h)}.kpi .l{color:var(--ink)}.kpi .d{color:var(--mut)}
+.q[data-p="M"]{background:color-mix(in srgb,var(--amber) 13%,var(--card));border-color:color-mix(in srgb,var(--amber) 60%,var(--card))}
+.q[data-p="S"]{background:color-mix(in srgb,var(--skyH) 9%,var(--card));border-color:color-mix(in srgb,var(--skyH) 35%,var(--card))}
+.q[data-p="N"]{border-style:dashed}
+.q[data-p="M"] .id{color:var(--amberH)}.q[data-p="S"] .id{color:var(--skyH)}.q[data-p="N"] .id{color:var(--mut)}
+.pri.S{background:var(--skyH);border-color:var(--skyH);color:var(--onph)}
+.fbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0 4px}.fbar span{font-size:var(--small);font-weight:700;color:var(--mut);margin-right:2px}
+.fb{font:inherit;font-size:var(--small);font-weight:700;cursor:pointer;border-radius:999px;padding:6px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.fb i{font-style:normal;opacity:.7;margin-left:4px}.fb:hover{border-color:var(--bar)}.fb:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.fb.on{background:var(--navy);border-color:var(--navy);color:#fff}.fb.on[data-f="M"]{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}.fb.on[data-f="S"]{background:var(--skyH);border-color:var(--skyH);color:var(--onph)}
+.defs p{margin:0 0 12px}.defs p:last-child{margin:0}
+.fx{display:inline-block;margin:2px 0;padding:1px 9px;border-radius:8px;background:color-mix(in srgb,var(--tealH) 12%,var(--card));border:1px solid color-mix(in srgb,var(--tealH) 40%,var(--card));color:var(--tealH);font-weight:700;font-size:15px;white-space:normal}
+.figw.fl svg{min-width:520px;max-width:1000px;margin:0 auto}.flowfull .card{padding:20px 24px}.flowfull .card>p{text-align:center;margin:12px 0 0}.figw .dia{fill:var(--sub);stroke:var(--bar);stroke-width:2}.figw .b2{font-size:14px;font-weight:700}
+.figw .arT{fill:none;stroke:var(--teal);stroke-width:2}.figw .aht{fill:var(--teal)}.figw .arA{fill:none;stroke:var(--amber);stroke-width:2}.figw .aha2{fill:var(--amber)}
+.figw .lt{font-size:13px;font-weight:700;fill:var(--tealH)}.figw .la{font-size:13px;font-weight:700;fill:var(--amberH)}
+.ph .phase{color:var(--ph);font-size:13.5px}
+.ph .steps li{background:color-mix(in srgb,var(--ph) 8%,var(--card));border-color:color-mix(in srgb,var(--ph) 32%,var(--card))}
+.ph .steps li::before,.ph .steps li.L::before{background:var(--ph);color:var(--onph)}
+.ph .steps b.t{color:var(--ink)}
+.steps li.L::after{content:"beban besar";position:absolute;right:12px;top:12px;font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:1px 8px;border-radius:999px;border:1px solid var(--ph,var(--amber));color:var(--ph,var(--amber))}
+.steps li.L b.t{padding-right:84px}
+.banner{background:linear-gradient(120deg,#1A73E8,#4285F4)}
+h2{border-bottom:3px solid transparent;border-image:linear-gradient(90deg,var(--gb) 0 60px,var(--line) 60px) 1}
+nav a:nth-child(4n+1):hover{background:var(--gb);border-color:var(--gb);color:#fff}nav a:nth-child(4n+2):hover{background:var(--gr);border-color:var(--gr);color:#fff}nav a:nth-child(4n+4):hover{background:var(--gg);border-color:var(--gg);color:#fff}
+.callout.g{background:#E6F4EA;color:#0D652D;border:1px solid #A8DAB5}.callout.g h4{color:#137333}
+.callout.a{background:#FEF7E0;color:#3C2A00;border:1px solid #FDD663}
+.outs{display:grid;gap:12px;margin:12px 0}.outs .card{margin:0}
+.out{--h:var(--navyH);border-top:4px solid var(--h)}
+.out .oh{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.out .oh b{font-size:var(--h3);color:var(--h);line-height:1.3}
+.ob{flex:none;border-radius:999px;padding:1px 9px;font-size:var(--label);font-weight:700;background:var(--amber);color:var(--amber-ink)}.ob.opt{background:var(--sub);border:1px solid var(--line);color:var(--mut)}
+.out ul{margin:8px 0 0;padding-left:18px;font-size:15px;line-height:1.5}.out li{margin:4px 0}
+.out li:nth-last-child(-n+2){color:var(--mut);font-size:14px}
+@media (min-width:700px){.outs{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1280px){.outs{grid-template-columns:repeat(4,1fr)}}
+.tag.c1{background:#188038;color:#fff}.tag.c2{background:#9334E6;color:#fff}.tag.c3{background:#D93025;color:#fff}.tag.c4{background:#fff;color:#1A73E8}
+.sample td:first-child{white-space:nowrap}.src{border-top:1px dashed var(--line);padding-top:8px;font-size:15px}.src code{font-size:13.5px;background:var(--soft);padding:1px 6px;border-radius:6px}.note{font-size:13px;color:var(--mut);margin:6px 0 0}
+.wf{display:grid;gap:4px}
+.wl{--c:var(--navyH);position:relative;background:color-mix(in srgb,var(--c) 8%,var(--card));border:1px solid color-mix(in srgb,var(--c) 30%,var(--card));border-radius:14px;padding:10px 12px 12px}
+.wl h4{margin:0 0 10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--c)}
+.ws{display:grid;gap:22px}
+.wb{position:relative;background:var(--card);border:2px solid var(--c);border-radius:12px;padding:10px 12px 10px 52px;min-height:62px}
+.wb .n{position:absolute;left:12px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--c);color:var(--onph);font-weight:800;font-size:14px;display:grid;place-items:center}
+.wb b{display:block;font-size:15px;line-height:1.3}.wb .s{display:block;font-size:13px;color:var(--mut);margin-top:2px}
+.wb.L::before{content:"beban besar";position:absolute;top:-10px;right:10px;background:var(--amber);color:var(--amber-ink);font-size:11px;font-weight:700;padding:0 8px;border-radius:999px;line-height:18px}
+.wb:not(:last-child)::after{content:"↓";position:absolute;left:50%;bottom:-21px;transform:translateX(-50%);color:var(--c);font-weight:800;font-size:16px;line-height:1}
+.wa{text-align:center;font-weight:800;font-size:20px;color:var(--mut);line-height:1.2}
+.wrow,.wrow1{display:grid;gap:4px}
+.wrow>.wl:first-child{margin-bottom:24px}.wrow>.wl:first-child::after{content:"↓";position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);font-weight:800;font-size:20px;color:var(--mut)}
+@media (min-width:1200px){
+.wrow{grid-template-columns:2fr 3fr;gap:30px}.wrow>.wl:first-child{margin-bottom:0}.wrow>.wl:first-child::after{content:"→";left:auto;right:-24px;bottom:auto;top:50%;transform:translateY(-50%)}
+.wrow1{grid-template-columns:2fr 3fr}
+.ws{grid-template-columns:repeat(var(--k),1fr);gap:26px}
+.wb:not(:last-child)::after{content:"→";left:auto;right:-25px;bottom:auto;top:50%;transform:translateY(-50%)}
+.wl{padding-left:8px;padding-right:8px}.ws{gap:34px}
+.wrow,.wrow1{gap:16px}.wrow>.wl:first-child::after{right:-14px;font-size:16px}
+}
+.docs code{font-size:13.5px;background:var(--soft);padding:1px 6px;border-radius:6px;white-space:nowrap}.docs td:nth-child(3){white-space:nowrap}
+/* layar lebar: nav jadi sidebar, konten dibagi kolom */
+.two{display:grid;gap:0 24px;align-items:start}.two>*{min-width:0}
+.qgrid{display:grid;gap:0 12px}.qgrid>*{min-width:0}
+@media (min-width:1000px){
+main{max-width:1480px}
+.two,.qgrid{grid-template-columns:1fr 1fr}.qgrid .theme{grid-column:1/-1}
+.kpis{grid-template-columns:repeat(6,1fr)}.tools{grid-template-columns:repeat(3,1fr)}
+.intro{display:grid;grid-template-columns:1fr 1fr;column-gap:28px;align-items:start}.intro h3{grid-column:1/-1}.intro>p{grid-column:1}.intro>.scroll{grid-column:2;grid-row:2/span 3;margin-top:8px}
+.phases{display:grid;grid-template-columns:repeat(2,1fr);gap:0 24px}.phases>*{min-width:0}
+}
+@media (min-width:1280px){
+main{display:grid;grid-template-columns:190px minmax(0,1fr);column-gap:32px}
+main>*{grid-column:2}
+main>nav{grid-column:1;grid-row:1/span 60;align-self:start;flex-direction:column;padding-top:16px}
+main>nav a{border-radius:10px;font-size:15px;padding:8px 14px}
+.phases{grid-template-columns:repeat(4,1fr)}
+}
+@media (max-width:620px){.kpis,.res{grid-template-columns:1fr 1fr}.tools{grid-template-columns:1fr}.row .n{width:78px}.banner{padding:18px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.row .b{transition:none}}
+.figw .arN{fill:none;stroke:var(--amber);stroke-width:2;stroke-dasharray:5 4}.figw .arD{fill:none;stroke:var(--mut);stroke-width:2;stroke-dasharray:2 4}.figw .ahd{fill:var(--mut)}
+div.row{cursor:default}.row .n{width:130px}.row .c{width:78px}
+.row .bl{position:absolute;top:-3px;bottom:-3px;width:0;border-left:2px dashed var(--roseH)}
+@media (min-width:1200px){.wa{display:grid;grid-template-columns:repeat(5,1fr);gap:34px;padding:0 9px;text-align:center}.wa.r span{grid-column:5}.wa.l span{grid-column:1}.ws.rev{direction:rtl}.ws.rev .wb{direction:ltr}.ws.rev .wb:not(:last-child)::after{content:"←";right:auto;left:-25px}}
+#chart svg{display:block;width:100%;height:auto;font-family:var(--f)}
+@media (max-width:620px){.row .n{width:96px}.row .c{width:66px}.ctl{flex-wrap:wrap}.ctl label{flex-basis:100%}}
+.tab{flex:none;font:inherit;font-size:15px;font-weight:800;cursor:pointer;background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 16px}
+.tab[data-t=design]{--c:var(--navy)}.tab[data-t=report]{--c:var(--teal)}
+.tab:hover{border-color:var(--c)}.tab.on{background:var(--c);border-color:var(--c);color:#fff}.tab:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.links{display:contents}.links[data-tab=design]{--ac:var(--navy)}.links[data-tab=report]{--ac:var(--teal)}
+.links a{font-size:13.5px;font-weight:600;color:var(--mut);padding:5px 12px}
+.pane code{font-size:.92em;background:var(--sub);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere}
+.pane pre{background:var(--sub);border:1px solid var(--line);border-radius:12px;padding:12px 16px;overflow-x:auto;font-size:14px;line-height:1.5}.pane pre code{background:none;padding:0;overflow-wrap:normal}
+.pill.p{background:var(--amber);color:var(--amber-ink)}
+.callout a{color:inherit;font-weight:700;text-decoration:underline}
+@media (min-width:1280px){
+main>nav{gap:8px}
+.tab{border-radius:12px;font-size:16px;padding:12px 16px;text-align:left;border-left:8px solid var(--c)}
+.links{display:flex;flex-direction:column;gap:2px;margin:0 0 8px 12px;padding-left:12px;border-left:3px solid var(--ac)}
+main>nav .links a{background:none;border:0;border-radius:8px;font-size:14.5px;font-weight:600;color:var(--mut);padding:6px 10px}
+main>nav .links a:hover,main>nav .links a:focus-visible{background:var(--soft);color:var(--head)}
+}
+</style>
+</head><body>
+<a href="https://bagusbernadi.github.io/" style="display:inline-block;margin:12px 16px;font:600 14px/1.4 'Source Sans 3',Arial,sans-serif;color:#1A73E8;text-decoration:none">← All projects / Semua project</a>
+<main>
+<nav aria-label="Project navigation"><button type="button" class="tab on" data-t="design" aria-expanded="true" aria-controls="design">Design Project</button><div class="links" data-tab="design"><a href="#s1">Background</a><a href="#s2">Business Questions</a><a href="#s3">Threshold Rule</a><a href="#s4">Dataset</a><a href="#s5">Tools</a><a href="#s6">Work Plan</a><a href="#s7">Project Outputs</a><a href="#s8">Success Criteria</a><a href="#s9">Assumptions &amp; Limitations</a></div><button type="button" class="tab" data-t="report" aria-expanded="false" aria-controls="report">Report Project</button><div class="links" data-tab="report" hidden><a href="#rp1">Problem</a><a href="#rp2">Data</a><a href="#rp3">Analysis</a><a href="#rp4">Recommendation</a><a href="#rp5">Impact</a><a href="#rp6">Batasan</a></div></nav>
+
+<header class="banner"><h1>Project 28: Predictive Maintenance Failure Analysis</h1>
+<p class="goal"><b>Tujuan project:</b> menganalisis data operasi mesin publik untuk menemukan kondisi dan jenis kegagalan yang paling sering menyebabkan mesin rusak, lalu merumuskan aturan ambang sederhana yang terukur ketepatannya, agar jadwal inspeksi dan penggantian alat bisa ditentukan sebelum kerusakan terjadi.</p>
+<div class="tags"><span class="tlab">Kategori:</span><span class="tag a">Rancangan project</span><span class="tag c1">Perawatan mesin</span><span class="tag c2">Dataset publik (sintetis)</span><span class="tag c3">SQL + dashboard</span></div></header>
+
+<div class="pane" id="design" data-tab="design">
+<section class="card intro">
+<h3>Project Introduction</h3>
+<p>Bayangkan pemilik usaha ojek dengan puluhan motor. Setiap hari ia mencatat jenis motor, suhu mesin, putaran mesin, beban yang dibawa, dan sudah berapa lama kampas rem dipakai. Sesekali motor mogok di jalan, dan penyebabnya berbeda-beda: kampas habis, mesin terlalu panas, atau beban terlalu berat.</p>
+<p>Setiap motor mogok berarti pendapatan hilang dan biaya derek. Pemilik ingin tahu kondisi apa yang paling sering mendahului motor mogok, lalu membuat aturan servis yang sederhana, misalnya "ganti kampas setelah sekian kilometer", tanpa terlalu sering mengganti suku cadang yang masih bagus.</p>
+<div class="scroll"><table><tr><th>Di usaha ojek</th><th>Di dataset mesin</th></tr>
+<tr><td>Motor ojek</td><td>Mesin milling yang memotong benda kerja</td></tr>
+<tr><td>Jenis motor (bebek, matic, sport)</td><td>Tipe produk L, M, H (kualitas rendah, sedang, tinggi)</td></tr>
+<tr><td>Suhu udara dan suhu mesin</td><td>Air temperature dan process temperature</td></tr>
+<tr><td>Putaran mesin dan beban</td><td>Rotational speed dan torque</td></tr>
+<tr><td>Umur kampas rem</td><td>Tool wear: lama alat potong sudah dipakai (menit)</td></tr>
+<tr><td>Motor mogok dan penyebabnya</td><td>Machine failure dan 5 jenis kegagalan (failure mode)</td></tr>
+<tr><td>Aturan servis per kilometer</td><td>Aturan ambang tool wear dan torque untuk inspeksi</td></tr>
+</table></div>
+<p>Project ini membangun <b>analisis kegagalan mesin dan aturan ambang yang terukur</b>: data publik dimuat ke database, kondisi yang mendahului kegagalan dianalisis dengan SQL, lalu setiap aturan diuji dengan precision dan recall, bukan akurasi. Datanya dataset publik yang dibuat secara sintetis oleh penyusunnya. Kata bergaris bawah putus-putus kuning bisa diklik untuk melihat artinya.</p>
+<div class="layout">
+<h3>Gambaran alur kerja perawatan mesin</h3>
+<p class="lead">Perawatan mesin bisa dibayangkan sebagai tiga jalur. Dua jalur pertama menggambarkan kondisi umum tanpa analisis data. Jalur ketiga adalah yang dibangun di project ini.</p>
+<div class="figw"><svg viewBox="0 0 1240 432" role="img" aria-label="Alur perawatan mesin: jalur operasi mesin dengan sensor, jalur perawatan setelah rusak, dan jalur data baru berupa dataset, fitur, failure rate, aturan ambang, dan dashboard"><defs><marker id="mN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0 0L10 5L0 10z"/></marker><marker id="mA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="aha" d="M0 0L10 5L0 10z"/></marker><marker id="mD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ahd" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="lane" x="0" y="8" width="1240" height="130" rx="14"/><rect class="lane" x="0" y="150" width="1240" height="140" rx="14"/><rect class="lane" x="0" y="302" width="1240" height="128" rx="14"/>
+<text class="ln" x="18" y="66">Jalur</text><text class="ln" x="18" y="84">operasi</text>
+<text class="ln" x="18" y="212">Jalur</text><text class="ln" x="18" y="230">perawatan</text>
+<text class="ln" x="18" y="362">Jalur</text><text class="ln" x="18" y="380">data</text>
+<text class="gl" x="525" y="30" text-anchor="middle">Mesin bekerja dan sensor mencatat kondisi</text>
+<rect class="box" x="150" y="45" width="210" height="62" rx="10"/><text class="bt b" x="255" y="71" text-anchor="middle">Mesin bekerja</text><text class="st" x="255" y="91" text-anchor="middle">tipe produk L / M / H</text>
+<line class="ar" x1="360" x2="416" y1="76" y2="76" marker-end="url(#mN)"/>
+<rect class="box" x="420" y="45" width="210" height="62" rx="10"/><text class="bt b" x="525" y="71" text-anchor="middle">Sensor mencatat</text><text class="st" x="525" y="91" text-anchor="middle">suhu, rpm, torque, tool wear</text>
+<line class="ar" x1="630" x2="686" y1="76" y2="76" marker-end="url(#mN)"/>
+<rect class="box" x="690" y="45" width="210" height="62" rx="10"/><text class="bt b" x="795" y="71" text-anchor="middle">Kadang gagal</text><text class="st" x="795" y="91" text-anchor="middle">5 jenis kegagalan</text>
+<polyline class="arN" points="795,107 795,164 245,164 245,176" marker-end="url(#mA)"/>
+<rect class="box" x="150" y="180" width="190" height="60" rx="10"/><text class="bt b" x="245" y="206" text-anchor="middle">Mesin berhenti</text><text class="st" x="245" y="225" text-anchor="middle">di tengah produksi</text>
+<line class="ar" x1="340" x2="376" y1="210" y2="210" marker-end="url(#mN)"/>
+<rect class="box" x="380" y="180" width="190" height="60" rx="10"/><text class="bt b" x="475" y="206" text-anchor="middle">Perbaikan</text><text class="st" x="475" y="225" text-anchor="middle">setelah rusak</text>
+<line class="ar" x1="570" x2="606" y1="210" y2="210" marker-end="url(#mN)"/>
+<rect class="box" x="610" y="180" width="190" height="60" rx="10"/><text class="bt b" x="705" y="206" text-anchor="middle">Downtime</text><text class="st" x="705" y="225" text-anchor="middle">output hilang</text>
+<line class="ar" x1="800" x2="836" y1="210" y2="210" marker-end="url(#mN)"/>
+<rect class="box" x="840" y="180" width="190" height="60" rx="10"/><text class="bt b" x="935" y="206" text-anchor="middle">Ganti alat</text><text class="st" x="935" y="225" text-anchor="middle">jadwal tetap / tebakan</text>
+<text class="nl" x="475" y="268" text-anchor="middle">tanpa data: terlambat atau terlalu cepat</text>
+<polyline class="arD" points="900,76 1190,76 1190,318 240,318 240,336" marker-end="url(#mD)"/><text class="st" x="1010" y="66" text-anchor="middle">catatan menjadi dataset</text>
+<rect class="box hi" x="150" y="340" width="180" height="62" rx="10"/><text class="bt b" x="240" y="366" text-anchor="middle">Dataset AI4I</text><text class="st" x="240" y="386" text-anchor="middle">±10.000 baris</text>
+<line class="ar" x1="330" x2="356" y1="371" y2="371" marker-end="url(#mN)"/>
+<rect class="box hi" x="360" y="340" width="180" height="62" rx="10"/><text class="bt b" x="450" y="366" text-anchor="middle">Cleaning + fitur</text><text class="st" x="450" y="386" text-anchor="middle">power, selisih suhu</text>
+<line class="ar" x1="540" x2="566" y1="371" y2="371" marker-end="url(#mN)"/>
+<rect class="box hi" x="570" y="340" width="180" height="62" rx="10"/><text class="bt b" x="660" y="366" text-anchor="middle">Failure rate</text><text class="st" x="660" y="386" text-anchor="middle">per kondisi (SQL)</text>
+<line class="ar" x1="750" x2="776" y1="371" y2="371" marker-end="url(#mN)"/>
+<rect class="box hi" x="780" y="340" width="180" height="62" rx="10"/><text class="bt b" x="870" y="366" text-anchor="middle">Aturan ambang</text><text class="st" x="870" y="386" text-anchor="middle">precision &amp; recall</text>
+<line class="ar" x1="960" x2="986" y1="371" y2="371" marker-end="url(#mN)"/>
+<rect class="box hi" x="990" y="340" width="180" height="62" rx="10"/><text class="bt b" x="1080" y="366" text-anchor="middle">Dashboard</text><text class="st" x="1080" y="386" text-anchor="middle">jadwal inspeksi</text>
+<line class="grp" x1="150" x2="1170" y1="410" y2="410"/><text class="gl" x="660" y="425" text-anchor="middle">Bagian yang dibangun di project ini</text>
+<circle class="mk" cx="420" cy="45" r="13"/><text class="mt" x="420" y="50" text-anchor="middle">1</text>
+<circle class="mk" cx="380" cy="180" r="13"/><text class="mt" x="380" y="185" text-anchor="middle">2</text>
+<circle class="mk" cx="360" cy="340" r="13"/><text class="mt" x="360" y="345" text-anchor="middle">3</text>
+<circle class="mk" cx="780" cy="340" r="13"/><text class="mt" x="780" y="345" text-anchor="middle">4</text>
+</svg></div>
+<ol class="legend">
+<li><b>Sensor mencatat kondisi.</b> Setiap kali mesin bekerja, sensor mencatat suhu, putaran, torque, dan lama pemakaian alat potong, seperti catatan harian motor ojek.</li>
+<li><b>Perawatan setelah rusak.</b> Tanpa analisis, mesin baru diperbaiki setelah berhenti, atau alat diganti dengan jadwal tetap. Hasilnya downtime, atau alat yang masih bagus ikut dibuang.</li>
+<li><b>Data dan fitur.</b> Dataset dibersihkan dan ditambah fitur turunan, misalnya power dan selisih suhu, lalu failure rate dihitung per kondisi operasi dengan SQL.</li>
+<li><b>Aturan ambang.</b> Setiap aturan sederhana diuji: berapa kegagalan yang tertangkap (recall) dan berapa peringatan yang benar (precision). Aturan terbaik ditampilkan di dashboard sebagai usulan jadwal inspeksi.</li>
+</ol>
+</div>
+</section>
+
+<div class="kpis">
+<div class="card kpi" style="--h:var(--navyH)"><span class="v">14</span><span class="l">pertanyaan analisis</span><span class="d">Hal yang ingin dijawab, 9 di antaranya prioritas utama (bagian 2).</span></div>
+<div class="card kpi" style="--h:var(--amberH)"><span class="v">5</span><span class="l">jenis kegagalan</span><span class="d">TWF, HDF, PWF, OSF, dan RNF, dianalisis terpisah (bagian 4).</span></div>
+<div class="card kpi" style="--h:var(--tealH)"><span class="v">12</span><span class="l">langkah pengerjaan</span><span class="d">Dari mencatat versi dataset sampai project siap ditinjau (bagian 6).</span></div>
+<div class="card kpi" style="--h:var(--plumH)"><span class="v">±10.000</span><span class="l">baris data</span><span class="d">Satu baris satu run mesin; perkiraan, diverifikasi saat data diunduh.</span></div>
+<div class="card kpi" style="--h:var(--roseH)"><span class="v">±3%</span><span class="l">run yang gagal</span><span class="d">Kegagalan sangat jarang, sehingga akurasi bisa menyesatkan (bagian 3).</span></div>
+<div class="card kpi" style="--h:var(--skyH)"><span class="v">4</span><span class="l">tabel data</span><span class="d">Data mentah, fitur, kegagalan per jenis, dan evaluasi aturan (bagian 4).</span></div>
+</div>
+
+<h2 id="s1">1. Background<small>Kenapa tema ini dipilih</small></h2>
+<div class="card two">
+<div><h3>Latar belakang masalah</h3>
+<p>Banyak pabrik masih merawat mesin dengan dua cara: memperbaiki setelah rusak, atau mengganti komponen dengan jadwal tetap. Keduanya mahal dengan cara berbeda:</p>
+<ul class="tight">
+<li>Mesin yang berhenti mendadak menghentikan produksi, dan biaya downtime sering jauh lebih besar dari biaya perbaikannya.</li>
+<li>Jadwal tetap membuat alat yang masih bagus ikut diganti, sementara alat yang aus lebih cepat tetap rusak sebelum jadwal.</li>
+<li>Data sensor sebenarnya tersedia, tetapi jarang dianalisis untuk mencari kondisi yang mendahului kegagalan.</li>
+<li>Saat analisis dilakukan, hasilnya sering dinilai dengan akurasi. Karena kegagalan sangat jarang, aturan yang tidak pernah memberi peringatan pun tampak "akurat".</li>
+</ul></div>
+<div><h3>Alasan memilih tema ini sebagai portofolio</h3>
+<ul class="tight">
+<li><b>Data publik yang mudah diverifikasi.</b> Siapa pun bisa mengunduh dataset yang sama dan mengecek angkanya, sehingga recruiter bisa menilai hasil secara langsung.</li>
+<li><b>Menunjukkan skill inti Data Analyst.</b> SQL untuk agregasi dan segmentasi, fitur turunan, evaluasi dengan precision dan recall, dan menerjemahkan temuan menjadi aturan yang bisa dijalankan.</li>
+<li><b>Tingkat kesulitan menengah.</b> Analisisnya deskriptif dan berbasis aturan, tanpa model prediksi yang rumit. Tantangannya ada pada data yang tidak seimbang dan cara menilai aturan dengan benar.</li>
+<li><b>Berdiri sendiri, tetapi saling melengkapi.</b> Project ini memakai data publik, tidak bergantung project lain. Cara berpikir ambang dan alert sejalan dengan Project 15 (SPC Control Chart) dan Project 5 (Sensor Anomaly Detection).</li>
+</ul></div>
+</div>
+
+<h2 id="s2">2. Business Questions<small>Satu pertanyaan utama, dipecah menjadi pertanyaan yang lebih kecil</small></h2>
+<div class="callout a"><h4>Pertanyaan utama</h4>Kondisi operasi dan jenis kegagalan apa yang paling sering menyebabkan mesin rusak, dan pada ambang berapa risikonya naik?</div>
+<p class="how">Pertanyaan utama terlalu besar untuk dijawab sekaligus, jadi dipecah per tema. Label "Utama" berarti wajib dijawab dan dikerjakan lebih dulu. "Pendukung" memperdalam hasil. "Tambahan" dikerjakan jika waktu tersisa. Teks abu-abu di bawah tiap pertanyaan adalah cara menjawabnya.</p>
+
+<div class="fbar" role="group" aria-label="Filter pertanyaan"><span>Tampilkan:</span><button type="button" class="fb on" data-f="*">Semua <i>14</i></button><button type="button" class="fb" data-f="M">Utama <i>9</i></button><button type="button" class="fb" data-f="S">Pendukung <i>4</i></button><button type="button" class="fb" data-f="N">Tambahan <i>1</i></button></div>
+<div class="qgrid" id="qg">
+<p class="theme">Kegagalan: seberapa sering dan jenis apa</p>
+<div class="q" data-p="M"><span class="id">Q1</span><span>Berapa failure rate keseluruhan, dan apakah berbeda untuk tipe produk L, M, dan H?<span class="pri M">Utama</span></span><span class="m">Failure rate per tipe dengan confidence interval</span></div>
+<div class="q" data-p="M"><span class="id">Q2</span><span>Jenis kegagalan mana yang paling sering, dan berapa porsi masing-masing?<span class="pri M">Utama</span></span><span class="m">Distribusi failure mode, Pareto</span></div>
+
+<p class="theme">Kondisi: apa yang mendahului kegagalan</p>
+<div class="q" data-p="M"><span class="id">Q3</span><span>Pada tool wear berapa menit failure rate mulai naik tajam?<span class="pri M">Utama</span></span><span class="m">Failure rate per bucket tool wear</span></div>
+<div class="q" data-p="M"><span class="id">Q4</span><span>Bagaimana torque dan kecepatan putar berhubungan dengan kegagalan?<span class="pri M">Utama</span></span><span class="m">Failure rate per bucket torque × rpm, heatmap</span></div>
+<div class="q" data-p="S"><span class="id">Q5</span><span>Apakah selisih suhu proses dan udara yang kecil terkait dengan kegagalan panas?<span class="pri S">Pendukung</span></span><span class="m">Fitur selisih suhu vs HDF</span></div>
+<div class="q" data-p="S"><span class="id">Q6</span><span>Apakah power yang terlalu rendah atau terlalu tinggi terkait dengan kegagalan daya?<span class="pri S">Pendukung</span></span><span class="m">Fitur power vs PWF</span></div>
+<div class="q" data-p="S"><span class="id">Q7</span><span>Kombinasi torque dan tool wear seperti apa yang mendahului overstrain?<span class="pri S">Pendukung</span></span><span class="m">Fitur tool wear × torque per tipe produk</span></div>
+
+<p class="theme">Aturan ambang: peringatan yang tepat</p>
+<div class="q" data-p="M"><span class="id">Q8</span><span>Aturan ambang sederhana apa yang menangkap kegagalan terbanyak dengan peringatan palsu paling sedikit?<span class="pri M">Utama</span></span><span class="m">Precision, recall, dan proporsi peringatan per ambang</span></div>
+<div class="q" data-p="M"><span class="id">Q9</span><span>Kenapa akurasi menyesatkan untuk data ini, dibanding aturan "tidak pernah memberi peringatan"?<span class="pri M">Utama</span></span><span class="m">Bandingkan akurasi dengan baseline</span></div>
+<div class="q" data-p="S"><span class="id">Q10</span><span>Apakah aturan terbaik tetap bekerja untuk tipe L, M, dan H secara terpisah?<span class="pri S">Pendukung</span></span><span class="m">Evaluasi aturan per tipe produk</span></div>
+
+<p class="theme">Penerapan: jika aturan dipakai</p>
+<div class="q" data-p="M"><span class="id">Q11</span><span>Berapa kegagalan yang bisa dicegah, dan berapa alat yang diganti terlalu cepat, jika aturan dipakai?<span class="pri M">Utama</span></span><span class="m">Tabel trade-off per ambang</span></div>
+<div class="q" data-p="M"><span class="id">Q12</span><span>Berapa estimasi downtime yang bisa dihindari?<span class="pri M">Utama</span></span><span class="m">Downtime terhindari = (failure rate lama − baru) × jumlah run × biaya per kejadian</span></div>
+
+<p class="theme">Data dan validitas</p>
+<div class="q" data-p="M"><span class="id">Q13</span><span>Apakah ada nilai kosong, duplikat, atau label yang tidak konsisten, misalnya mesin gagal tanpa jenis kegagalan?<span class="pri M">Utama</span></span><span class="m">Audit kualitas data, catat keputusan</span></div>
+<div class="q" data-p="N"><span class="id">Q14</span><span>Seberapa mirip ambang yang ditemukan dengan aturan yang dijelaskan di dokumentasi dataset?<span class="pri">Tambahan</span></span><span class="m">Bandingkan temuan dengan dokumentasi</span></div>
+</div>
+
+<h2 id="s3">3. Threshold Rule<span class="add">Komponen tambahan</span><small>Bagaimana satu aturan ambang dinilai, dan kenapa akurasi saja tidak cukup</small></h2>
+<p class="how">Setiap run mesin bisa masuk ke salah satu dari empat kotak di bawah. Aturan yang baik memperbanyak kotak hijau dan mengurangi kotak kuning. Arahkan kursor atau klik kata yang diberi garis bawah kuning untuk melihat pengertian dan rumusnya.</p>
+<div class="flowfull"><h3>Empat kemungkinan hasil sebuah aturan</h3>
+<div class="card"><div class="figw fl"><svg viewBox="0 0 800 292" role="img" aria-label="Diagram percabangan: data run ditambah fitur, lalu dicek apakah aturan memberi peringatan dan apakah mesin benar-benar gagal, menghasilkan empat kotak: peringatan benar, peringatan palsu, kegagalan terlewat, dan tenang tanpa kegagalan"><defs><marker id="fN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0 0L10 5L0 10z"/></marker><marker id="fT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="aht" d="M0 0L10 5L0 10z"/></marker><marker id="fA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="aha2" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="box" x="8" y="124" width="100" height="44" rx="10"/><text class="b2" x="58" y="151" text-anchor="middle">Run record</text>
+<line class="ar" x1="108" x2="130" y1="146" y2="146" marker-end="url(#fN)"/>
+<rect class="box" x="132" y="124" width="110" height="44" rx="10"/><text class="b2" x="187" y="151" text-anchor="middle">Add features</text>
+<line class="ar" x1="242" x2="266" y1="146" y2="146" marker-end="url(#fN)"/>
+<polygon class="dia" points="268,146 330,108 392,146 330,184"/><text class="b2" x="330" y="143" text-anchor="middle">Rule</text><text class="b2" x="330" y="159" text-anchor="middle">triggered?</text>
+<polyline class="arT" points="330,108 330,62 434,62" marker-end="url(#fT)"/><text class="lt" x="338" y="90">Yes</text>
+<polyline class="arA" points="330,184 330,232 434,232" marker-end="url(#fA)"/><text class="la" x="338" y="210">No</text>
+<polygon class="dia" points="436,62 500,26 564,62 500,98"/><text class="b2" x="500" y="59" text-anchor="middle">Machine</text><text class="b2" x="500" y="75" text-anchor="middle">failed?</text>
+<polygon class="dia" points="436,232 500,196 564,232 500,268"/><text class="b2" x="500" y="229" text-anchor="middle">Machine</text><text class="b2" x="500" y="245" text-anchor="middle">failed?</text>
+<polyline class="arT" points="564,62 586,62 586,36 612,36" marker-end="url(#fT)"/><text class="lt" x="592" y="28">Yes</text>
+<polyline class="arA" points="586,62 586,90 612,90" marker-end="url(#fA)"/><text class="la" x="592" y="104">No</text>
+<rect class="okb" x="616" y="18" width="176" height="36" rx="18"/><text class="wt" x="704" y="41" text-anchor="middle">True alarm</text>
+<rect class="scb" x="616" y="72" width="176" height="36" rx="18"/><text class="at" x="704" y="95" text-anchor="middle">False alarm</text>
+<polyline class="arA" points="564,232 586,232 586,206 612,206" marker-end="url(#fA)"/><text class="la" x="592" y="198">Yes</text>
+<polyline class="arT" points="586,232 586,260 612,260" marker-end="url(#fT)"/><text class="lt" x="592" y="274">No</text>
+<rect class="scb" x="616" y="188" width="176" height="36" rx="18"/><text class="at" x="704" y="211" text-anchor="middle">Missed failure</text>
+<rect class="okb" x="616" y="242" width="176" height="36" rx="18"/><text class="wt" x="704" y="265" text-anchor="middle">Quiet, no failure</text>
+</svg></div>
+<p>Precision melihat cabang atas: dari semua peringatan, berapa yang benar. Recall melihat kegagalan: dari semua mesin yang gagal, berapa yang tertangkap peringatan.</p></div></div>
+
+<h3>Kenapa aturan yang "kurang akurat" justru lebih berguna</h3>
+<p class="how">Setiap batang adalah akurasi aturan "beri peringatan jika tool wear ≥ ambang" untuk satu nilai ambang (angka contoh, bukan hasil dari data). Garis merah putus-putus adalah akurasi baseline yang tidak pernah memberi peringatan. Geser slider untuk memilih ambang, lalu bandingkan akurasi, recall, dan proporsi peringatan. Skala batang dimulai dari 50%.</p>
+<div class="card"><div id="bars"></div>
+<div class="ctl"><label for="sl">Ambang tool wear (menit)</label><input id="sl" type="range" min="150" max="240" step="10" value="200"><output id="slo" for="sl">200</output></div>
+<div class="res"><div>Akurasi<b id="r1"></b></div><div>Recall (kegagalan tertangkap)<b id="r2"></b></div><div>Proporsi peringatan<b id="r3"></b></div></div>
+<p id="ins" style="margin:12px 0 0;font-size:15.5px"></p></div>
+
+<h2 id="s4">4. Dataset<small>Dataset publik AI4I 2020 Predictive Maintenance dari UCI Machine Learning Repository</small></h2>
+<div class="two"><div class="card">
+<p><b>Kenapa dataset ini?</b> Dataset ini publik, kecil, rapi, dan banyak dipakai sebagai contoh predictive maintenance. Datanya sintetis: dibuat penyusunnya untuk meniru kondisi mesin nyata, karena data perawatan industri jarang dibuka ke publik. Karena itu semua angka dampak diberi label simulasi. Lisensi dan cara sitasi dicek di halaman dataset sebelum dipakai.</p>
+<p><b>Ukuran:</b> sekitar 10.000 baris dan 14 kolom, dengan sekitar 3% baris berlabel gagal (perkiraan, diverifikasi saat data diunduh). Satu baris adalah satu run mesin dengan tipe produk, lima nilai sensor, dan enam label kegagalan.</p>
+<p class="src"><b>Sumber data:</b> <a href="https://archive.ics.uci.edu/dataset/601" target="_blank" rel="noopener">here</a> (Versi: UCI 2020, Tanggal akses: 24 Oktober 2026). Penjelasan kolom dan jenis kegagalan mengikuti dokumentasi di halaman yang sama.</p>
+</div>
+<div class="callout g"><h4>Hipotesis yang akan diuji (belum terbukti)</h4>
+<p>1. Failure rate naik tajam setelah tool wear melewati sekitar 200 menit.</p>
+<p>2. Tipe produk L lebih sering gagal dibanding tipe M dan H.</p>
+<p>3. Selisih suhu proses dan udara yang kecil, ditambah putaran rendah, terkait dengan kegagalan panas.</p>
+<p>4. Power yang terlalu rendah atau terlalu tinggi terkait dengan kegagalan daya.</p>
+<p>5. Kombinasi torque tinggi dan tool wear tinggi mendahului overstrain, dengan batas yang berbeda per tipe produk.</p></div></div>
+
+<h3>Empat tabel yang akan dibuat</h3>
+<p class="how">Data mentah dimuat apa adanya, lalu diolah menjadi tabel fitur dan tabel kegagalan per jenis. Tabel terakhir menyimpan hasil uji setiap aturan, sehingga perbandingan antar aturan bisa diulang dengan SQL.</p>
+<div class="scroll"><table>
+<tr><th>Tabel</th><th>Isi (1 baris = …)</th><th>Kolom utama</th></tr>
+<tr><td><b>raw_ai4i</b></td><td>Satu run mesin, seperti di file asli</td><td>udi, product_id, type, air_temp_k, process_temp_k, rpm, torque_nm, tool_wear_min, machine_failure, twf, hdf, pwf, osf, rnf</td></tr>
+<tr><td><b>features</b></td><td>Satu run dengan fitur turunan</td><td>udi, type, temp_diff_k, power_w, wear_x_torque, wear_bucket, torque_bucket</td></tr>
+<tr><td><b>failure_mode_long</b></td><td>Satu jenis kegagalan yang terjadi pada satu run</td><td>udi, failure_mode</td></tr>
+<tr><td><b>rule_eval</b></td><td>Satu aturan dengan satu nilai ambang</td><td>rule_name, threshold, tp, fp, fn, tn, precision, recall, alert_share</td></tr>
+</table></div>
+
+<div class="two"><div><h3>Contoh isi tabel raw_ai4i</h3>
+<div class="scroll"><table class="sample"><tr><th>udi</th><th>type</th><th>rpm</th><th>torque_nm</th><th>tool_wear_min</th><th>machine_failure</th></tr>
+<tr><td>1024</td><td>L</td><td>1450</td><td>42,1</td><td>118</td><td>0</td></tr>
+<tr><td>5310</td><td>M</td><td>1320</td><td>61,7</td><td>212</td><td>1</td></tr></table></div>
+<p class="note">Angka karangan untuk ilustrasi, bukan baris asli dataset. Kolom suhu dan label jenis kegagalan tidak ditampilkan agar tabel ringkas.</p></div>
+
+<div class="card"><p style="margin:0 0 6px"><b>5 nilai sensor</b>:</p>
+<span class="chip">Air temperature (K)</span><span class="chip">Process temperature (K)</span><span class="chip">Rotational speed (rpm)</span><span class="chip">Torque (Nm)</span><span class="chip">Tool wear (menit)</span>
+<p style="margin:10px 0 6px"><b>5 jenis kegagalan</b>:</p>
+<span class="chip">TWF: alat potong aus</span><span class="chip">HDF: panas tidak terbuang</span><span class="chip">PWF: daya di luar rentang</span><span class="chip">OSF: beban berlebih</span><span class="chip">RNF: kegagalan acak</span></div></div>
+
+<h2 id="s5">5. Tools<small>Alat yang dipakai dan alasannya</small></h2>
+<div class="tools">
+<div class="card"><b>Python (pandas)</b><p class="r">Memuat file CSV, memeriksa kualitas data, dan membuat fitur turunan seperti power dan selisih suhu.</p><p class="alt">Bahasa paling umum di lowongan Data Analyst.</p></div>
+<div class="card"><b>DuckDB + SQL</b><p class="r">Menyimpan 4 tabel dan menghitung failure rate per tipe, per bucket, dan hasil uji aturan (TP, FP, FN, TN).</p><p class="alt">Gratis, tanpa server, satu file. Konsisten dengan project lain di portofolio ini.</p></div>
+<div class="card"><b>Streamlit + Plotly</b><p class="r">Dashboard: failure rate per kondisi, heatmap torque × rpm, dan simulasi ambang dengan precision dan recall.</p><p class="alt">Semua tetap di Python. Looker Studio di daftar portofolio tidak dipakai agar simulasi ambang bisa interaktif.</p></div>
+<div class="card"><b>Jupyter Notebook</b><p class="r">Mencatat langkah analisis, grafik, dan alasan setiap keputusan.</p><p class="alt">Mudah dibaca langsung di GitHub.</p></div>
+<div class="card"><b>scikit-learn (opsional)</b><p class="r">Menghitung ulang precision dan recall, dan membuat pohon keputusan dangkal sebagai pembanding aturan manual.</p><p class="alt">Hanya pembanding. Fokus project tetap pada aturan yang bisa dijelaskan.</p></div>
+<div class="card"><b>Excel</b><p class="r">Cek silang: menghitung ulang failure rate per tipe dan tabel TP/FP/FN/TN untuk satu aturan.</p><p class="alt">Memastikan angka SQL benar dengan cara yang mudah diverifikasi orang lain.</p></div>
+<div class="card"><b>GitHub</b><p class="r">Menyimpan kode, query, notebook, dan README. Data asli tidak di-commit; README menautkan ke sumbernya.</p><p class="alt">Standar industri untuk portofolio dan riwayat perubahan kode.</p></div>
+<div class="card"><b>Markdown</b><p class="r">Menulis README dengan sumber data, versi, tanggal akses, temuan, dan batasan.</p><p class="alt">Format teks sederhana yang tampil rapi otomatis di GitHub.</p></div>
+<div class="card"><b>SciPy (opsional)</b><p class="r">Menghitung confidence interval failure rate dan menguji apakah perbedaan antar tipe produk signifikan.</p><p class="alt">Membantu membedakan perbedaan nyata dari variasi acak.</p></div>
+</div>
+
+<h2 id="s6">6. Work Plan<small>Setiap tahap punya warna sendiri. Label "beban besar" = langkah yang paling banyak memakan waktu</small></h2>
+<p class="how">Urutannya seperti membangun rumah: gambar rencana dulu, siapkan bahan, bangun fondasi, baru isi ruangan. Setiap langkah memakai hasil langkah sebelumnya, jadi urutannya tidak boleh dilompati.</p>
+
+<h3>Alur tahapan kerja</h3>
+<div class="card"><div class="wf">
+<div class="wrow"><div class="wl" style="--c:var(--navyH)"><h4>Tahap A · Perencanaan</h4><div class="ws" style="--k:2"><div class="wb"><span class="n">1</span><b>Unduh &amp; catat versi</b><span class="s">sumber, lisensi</span></div><div class="wb"><span class="n">2</span><b>Definisi metrik</b><span class="s">kamus data</span></div></div></div><div class="wl" style="--c:var(--tealH)"><h4>Tahap B · Menyiapkan data</h4><div class="ws" style="--k:3"><div class="wb"><span class="n">3</span><b>Audit kualitas</b><span class="s">Q13</span></div><div class="wb L"><span class="n">4</span><b>Muat &amp; fitur</b><span class="s">DuckDB</span></div><div class="wb"><span class="n">5</span><b>Bucket kondisi</b><span class="s">tool wear, torque</span></div></div></div></div>
+<div class="wa r"><span>↓</span></div>
+<div class="wl" style="--c:var(--plumH)"><h4>Tahap C · Menghitung dan menganalisis</h4><div class="ws rev" style="--k:5"><div class="wb"><span class="n">6</span><b>Failure rate</b><span class="s">Q1–Q2</span></div><div class="wb L"><span class="n">7</span><b>Analisis kondisi</b><span class="s">Q3–Q7</span></div><div class="wb L"><span class="n">8</span><b>Uji aturan ambang</b><span class="s">Q8–Q10</span></div><div class="wb"><span class="n">9</span><b>Trade-off &amp; dampak</b><span class="s">Q11–Q12</span></div><div class="wb"><span class="n">10</span><b>Cek silang</b><span class="s">Excel · Q14</span></div></div></div>
+<div class="wa l"><span>↓</span></div>
+<div class="wrow1"><div class="wl" style="--c:var(--roseH)"><h4>Tahap D · Menyajikan</h4><div class="ws" style="--k:2"><div class="wb L"><span class="n">11</span><b>Membuat dashboard</b><span class="s">link dashboard</span></div><div class="wb"><span class="n">12</span><b>README &amp; finalisasi</b><span class="s">repositori siap</span></div></div></div></div>
+</div>
+<p class="note" style="text-align:center;margin-top:12px">Panah menunjukkan urutan pengerjaan. Angka di kotak sama dengan nomor langkah di bawah.</p></div>
+
+<div class="phases"><div class="ph" style="--ph:var(--navyH)"><p class="phase">Tahap A · Perencanaan</p>
+<ol class="steps">
+<li><b class="t">Mengunduh data dan mencatat sumbernya</b><p>Mengunduh dataset, mencatat versi, tanggal akses, lisensi, dan cara sitasi dari halaman dataset.</p><p class="meta">Hasil: catatan sumber data · Alat: Markdown</p></li>
+<li><b class="t">Menetapkan metrik dan kamus data</b><p>Menetapkan rumus failure rate, precision, recall, dan proporsi peringatan, serta arti dan satuan setiap kolom.</p><p class="meta">Hasil: kamus data dan definisi metrik · Alat: Markdown</p></li>
+</ol></div>
+
+<div class="ph" style="--ph:var(--tealH)"><p class="phase">Tahap B · Menyiapkan data</p>
+<ol class="steps" start="3" style="counter-reset:s 2">
+<li><b class="t">Mengaudit kualitas data</b><p>Memeriksa nilai kosong, duplikat, rentang nilai, dan label yang tidak konsisten. Setiap keputusan (dibuang, dipertahankan, ditandai) dicatat (Q13).</p><p class="meta">Hasil: log kualitas data · Alat: Python (pandas)</p></li>
+<li class="L"><b class="t">Memuat data dan membuat fitur turunan</b><p>Memuat data ke DuckDB, lalu menambah fitur power, selisih suhu, dan tool wear × torque.</p><p class="meta">Hasil: tabel raw_ai4i, features, failure_mode_long · Alat: DuckDB, SQL</p></li>
+<li><b class="t">Membuat kelompok kondisi</b><p>Membagi tool wear, torque, dan rpm ke dalam bucket agar failure rate bisa dibandingkan per kelompok.</p><p class="meta">Hasil: kolom bucket · Alat: SQL</p></li>
+</ol></div>
+
+<div class="ph" style="--ph:var(--plumH)"><p class="phase">Tahap C · Menghitung dan menganalisis</p>
+<ol class="steps" style="counter-reset:s 5">
+<li><b class="t">Menghitung failure rate</b><p>Menghitung failure rate keseluruhan dan per tipe produk dengan confidence interval, serta porsi tiap jenis kegagalan (Q1–Q2).</p><p class="meta">Hasil: tabel dan grafik failure rate · Alat: SQL, Plotly</p></li>
+<li class="L"><b class="t">Menganalisis kondisi operasi</b><p>Melihat failure rate per bucket tool wear, torque × rpm, selisih suhu, dan power untuk menemukan titik naiknya risiko (Q3–Q7).</p><p class="meta">Hasil: heatmap dan kurva failure rate · Alat: SQL, Plotly</p></li>
+<li class="L"><b class="t">Menguji aturan ambang</b><p>Menguji beberapa aturan pada berbagai nilai ambang, menghitung precision, recall, dan proporsi peringatan, lalu membandingkan dengan baseline dan per tipe produk (Q8–Q10).</p><p class="meta">Hasil: tabel rule_eval · Alat: SQL, Python</p></li>
+<li><b class="t">Menghitung trade-off dan dampak</b><p>Menghitung kegagalan yang dicegah, alat yang diganti terlalu cepat, dan estimasi downtime terhindari dengan asumsi biaya yang ditulis jelas (Q11–Q12).</p><p class="meta">Hasil: tabel skenario dampak (label simulasi) · Alat: Python</p></li>
+<li><b class="t">Cek silang dan bandingkan dokumentasi</b><p>Menghitung ulang angka kunci di Excel, lalu membandingkan ambang yang ditemukan dengan penjelasan di dokumentasi dataset (Q14).</p><p class="meta">Hasil: bagian validasi di README · Alat: Excel</p></li>
+</ol></div>
+
+<div class="ph" style="--ph:var(--roseH)"><p class="phase">Tahap D · Menyajikan</p>
+<ol class="steps" style="counter-reset:s 10">
+<li class="L"><b class="t">Membuat dashboard</b><p>Dashboard 3 halaman: Ringkasan Kegagalan, Kondisi Operasi (heatmap), dan Simulasi Aturan Ambang. Dipublikasikan agar bisa dibuka lewat link.</p><p class="meta">Hasil: link dashboard · Alat: Streamlit, Plotly</p></li>
+<li><b class="t">Menulis README, rekomendasi, dan finalisasi</b><p>Menulis masalah, data, analisis, usulan jadwal inspeksi, dampak, dan batasan. Mencantumkan sumber data dengan versi dan tanggal akses.</p><p class="meta">Hasil: repositori GitHub siap ditinjau · Alat: Markdown, GitHub</p></li>
+</ol></div></div>
+
+<h2 id="s7">7. Project Outputs<span class="add">Komponen tambahan</span><small>Hasil nyata yang bisa dibuka, dibaca, atau dipakai ulang setelah project selesai</small></h2>
+<p class="how">Setiap kartu adalah satu output. Label "Utama" berarti wajib dibuat, "Opsional" dibuat jika waktu tersisa. Setiap output ditujukan untuk pembaca yang berbeda, mulai dari manajemen sampai analis lain.</p>
+<div class="outs"><div class="card out" style="--h:var(--navyH)"><div class="oh"><b>Dashboard interaktif</b><span class="ob">Utama</span></div><ul><li>Halaman web 3 bagian: Ringkasan Kegagalan, Kondisi Operasi, dan Simulasi Aturan.</li><li>Slider ambang menampilkan precision, recall, dan proporsi peringatan.</li><li>Bentuk: link publik (Streamlit Community Cloud).</li><li>Untuk: tim perawatan dan engineer.</li></ul></div><div class="card out" style="--h:var(--roseH)"><div class="oh"><b>One-sheet aturan inspeksi</b><span class="ob">Utama</span></div><ul><li>Ringkasan satu halaman: kondisi berisiko, aturan yang diusulkan, dan trade-off-nya.</li><li>Bisa dipahami dalam waktu kurang dari 1 menit.</li><li>Bentuk: file PDF dan PNG.</li><li>Untuk: manajemen dan recruiter.</li></ul></div><div class="card out" style="--h:var(--tealH)"><div class="oh"><b>Database &amp; query SQL</b><span class="ob">Utama</span></div><ul><li>File DuckDB berisi 4 tabel: data mentah, fitur, kegagalan per jenis, dan evaluasi aturan.</li><li>Query failure rate per kondisi dan TP/FP/FN/TN per aturan.</li><li>Bentuk: folder query .sql dan skrip pembuat database.</li><li>Untuk: analis lain yang ingin mengulang analisis.</li></ul></div><div class="card out" style="--h:var(--plumH)"><div class="oh"><b>Notebook analisis</b><span class="ob">Utama</span></div><ul><li>Langkah Q1–Q14 lengkap dengan grafik dan penjelasan singkat.</li><li>Mencatat audit kualitas data dan cek silang.</li><li>Bentuk: Jupyter Notebook (.ipynb).</li><li>Untuk: pembaca teknis yang ingin melihat cara angka dihitung.</li></ul></div><div class="card out" style="--h:var(--skyH)"><div class="oh"><b>Tabel evaluasi aturan</b><span class="ob">Utama</span></div><ul><li>Semua aturan dan ambang yang diuji, dengan precision, recall, dan proporsi peringatan.</li><li>Dipisah per tipe produk.</li><li>Bentuk: file CSV dan tabel di README.</li><li>Untuk: tim perawatan yang memilih ambang.</li></ul></div><div class="card out" style="--h:var(--amberH)"><div class="oh"><b>Laporan temuan &amp; rekomendasi</b><span class="ob">Utama</span></div><ul><li>Berisi masalah, data, temuan, rekomendasi, estimasi dampak, dan batasan.</li><li>Angka dampak diberi label simulasi dan estimasi.</li><li>Bentuk: README di GitHub.</li><li>Untuk: semua pembaca, sebagai pintu masuk project.</li></ul></div><div class="card out" style="--h:var(--navyH)"><div class="oh"><b>Repositori GitHub</b><span class="ob">Utama</span></div><ul><li>Semua output di atas tersusun dalam satu folder project yang rapi.</li><li>Dilengkapi petunjuk mengunduh data dan menjalankan ulang project.</li><li>Bentuk: link repositori GitHub.</li><li>Untuk: recruiter dan reviewer portofolio.</li></ul></div><div class="card out" style="--h:var(--tealH)"><div class="oh"><b>Slide presentasi</b><span class="ob opt">Opsional</span></div><ul><li>5–7 slide: masalah, data, kondisi berisiko, aturan, dan trade-off.</li><li>Bentuk: PDF atau PowerPoint.</li><li>Untuk: presentasi saat wawancara kerja.</li></ul></div></div>
+
+<h3>Daftar dokumen yang akan dihasilkan</h3>
+<p class="how">Nama file adalah usulan awal dan bisa disesuaikan. Tabel diurutkan menurut tahap pengerjaan (A sampai D). Data asli dan file database tidak di-commit ke GitHub; README menjelaskan cara mengunduh dan membuat ulang.</p>
+<div class="scroll"><table class="docs"><tr><th>Nama dokumen</th><th>Isi</th><th>Tahap</th><th>Label</th></tr><tr><td><code>data/README.md</code></td><td>Sumber data, versi, tanggal akses, lisensi, dan cara mengunduh</td><td>Tahap A</td><td><span class="ob">Utama</span></td></tr><tr><td><code>docs/data_dictionary.md</code></td><td>Kamus data dan definisi metrik</td><td>Tahap A</td><td><span class="ob">Utama</span></td></tr><tr><td><code>data/raw/ai4i2020.csv</code></td><td>Data asli. Tidak di-commit, diunduh dari sumber</td><td>Tahap B</td><td><span class="ob">Utama</span></td></tr><tr><td><code>docs/data_quality_log.md</code></td><td>Hasil audit kualitas data dan keputusannya</td><td>Tahap B</td><td><span class="ob">Utama</span></td></tr><tr><td><code>scripts/build_db.py</code></td><td>Skrip pemuat data dan pembuat fitur</td><td>Tahap B</td><td><span class="ob">Utama</span></td></tr><tr><td><code>pdm.duckdb</code></td><td>File database. Tidak di-commit, dibuat ulang dari skrip</td><td>Tahap B</td><td><span class="ob">Utama</span></td></tr><tr><td><code>sql/</code></td><td>Query failure rate, bucket, dan evaluasi aturan</td><td>Tahap C</td><td><span class="ob">Utama</span></td></tr><tr><td><code>notebooks/analysis.ipynb</code></td><td>Analisis Q1–Q14 dengan grafik</td><td>Tahap C</td><td><span class="ob">Utama</span></td></tr><tr><td><code>outputs/rule_eval.csv</code></td><td>Hasil uji semua aturan dan ambang</td><td>Tahap C</td><td><span class="ob">Utama</span></td></tr><tr><td><code>outputs/crosscheck.xlsx</code></td><td>Cek silang angka kunci SQL vs Excel</td><td>Tahap C</td><td><span class="ob">Utama</span></td></tr><tr><td><code>dashboard/app.py</code></td><td>Aplikasi dashboard Streamlit (3 halaman)</td><td>Tahap D</td><td><span class="ob">Utama</span></td></tr><tr><td><code>requirements.txt</code></td><td>Daftar library Python yang dibutuhkan</td><td>Tahap D</td><td><span class="ob">Utama</span></td></tr><tr><td><code>outputs/onesheet.pdf / .png</code></td><td>One-sheet aturan inspeksi</td><td>Tahap D</td><td><span class="ob">Utama</span></td></tr><tr><td><code>README.md</code></td><td>Laporan temuan, rekomendasi, dampak, batasan, dan sumber data</td><td>Tahap D</td><td><span class="ob">Utama</span></td></tr><tr><td><code>index.html</code></td><td>Halaman rancangan project ini (GitHub Pages)</td><td>Tahap D</td><td><span class="ob">Utama</span></td></tr><tr><td><code>slides/presentation.pdf</code></td><td>Slide presentasi wawancara</td><td>Tahap D</td><td><span class="ob opt">Opsional</span></td></tr></table></div>
+
+<h2 id="s8">8. Success Criteria<span class="add">Komponen tambahan</span><small>Kapan project dianggap selesai dan berhasil</small></h2>
+<div class="card">
+<h3>Project dianggap berhasil jika</h3>
+<ul class="tight">
+<li>Kesembilan pertanyaan berlabel "Utama" terjawab dengan angka dari data.</li>
+<li>Failure rate dan tabel TP/FP/FN/TN dari SQL sama dengan hitungan ulang di Excel.</li>
+<li>Setiap aturan dinilai dengan precision, recall, dan proporsi peringatan, serta dibandingkan dengan baseline, bukan hanya akurasi.</li>
+<li>Kelima hipotesis diberi status jelas: didukung data, tidak didukung, atau belum bisa disimpulkan.</li>
+<li>Sumber data, versi, tanggal akses, dan lisensi tercatat di README dan di halaman ini.</li>
+<li>Orang awam bisa membuka dashboard dan menyebutkan kondisi paling berisiko dalam waktu kurang dari 1 menit, dan checklist standar portofolio terpenuhi.</li>
+</ul></div>
+
+<h2 id="s9">9. Assumptions &amp; Limitations<span class="add">Komponen tambahan</span><small>Keputusan yang sudah diambil dan hal yang perlu diwaspadai</small></h2>
+<div class="two"><div><details open><summary>Data: AI4I 2020 dari UCI <span class="pill">Sudah Anda setujui</span></summary><p>Versi UCI 2020, tanggal akses 24 Oktober 2026. Ukuran dan proporsi kegagalan di halaman ini masih perkiraan dan diverifikasi saat data diunduh.</p></details>
+<details><summary>Tools: DuckDB + SQL + Streamlit + Plotly <span class="pill">Sudah Anda setujui</span></summary><p>Daftar portofolio menulis SQLite dan Looker Studio sebagai pilihan; keduanya tidak dipakai. Kolom Tools di daftar sebaiknya diperbarui.</p></details></div>
+<div>
+<details><summary>Tingkat kesulitan dan ruang lingkup <span class="pill d">Usulan awal</span></summary><p>Menengah. Fokus pada analisis deskriptif dan aturan ambang yang bisa dijelaskan, tanpa model prediksi kompleks. Biaya per kejadian downtime memakai asumsi yang ditulis jelas, bukan angka nyata.</p></details>
+<details><summary>Hal yang perlu diwaspadai <span class="pill d">Usulan awal</span></summary>
+<p><b>Data sintetis.</b> Kegagalan dibuat penyusun dataset dengan aturan tertentu, sehingga pola bisa terlihat lebih rapi dari kondisi nyata. Semua angka dampak diberi label simulasi.</p>
+<p><b>Kelas sangat tidak seimbang.</b> Hanya sekitar 3% run yang gagal, sehingga akurasi tinggi tidak berarti aturan berguna.</p>
+<p><b>Jenis kegagalan bisa tumpang tindih.</b> Satu run bisa punya lebih dari satu jenis kegagalan, dan kegagalan acak (RNF) memang tidak bisa diprediksi.</p>
+<p><b>Pola belum tentu penyebab.</b> Ambang yang ditemukan adalah pola dalam data. Penerapan di mesin nyata tetap perlu diuji di lapangan.</p></details></div></div>
+</div>
+
+<div class="pane" id="report" data-tab="report" hidden>
+<div class="callout a"><h4>Status Report Project</h4><p>Laporan hasil diisi setelah analisis dikerjakan. Sudah ditulis: Problem, Data, Analysis, Recommendation, Impact, Batasan. Rancangan lengkap ada di tab <a href="#design">Design Project</a>.</p></div>
+<div class="scroll"><table><tr><th>Bagian</th><th>Status</th><th>Diisi setelah</th></tr>
+<tr><td><b>Problem</b></td><td><span class="pill">Draft</span></td><td>Sudah ditulis dari rancangan</td></tr>
+<tr><td><b>Data</b></td><td><span class="pill">Draft</span></td><td>Tahap B, langkah 3 sampai 5</td></tr>
+<tr><td><b>Analysis</b></td><td><span class="pill">Draft</span></td><td>Tahap C, langkah 6 sampai 10</td></tr>
+<tr><td><b>Recommendation</b></td><td><span class="pill">Draft</span></td><td>Tahap D, langkah 11 sampai 12</td></tr>
+<tr><td><b>Impact</b></td><td><span class="pill">Draft</span></td><td>Tahap C, langkah 6 sampai 10</td></tr>
+<tr><td><b>Batasan</b></td><td><span class="pill">Draft</span></td><td>Diperbarui setelah Tahap B (langkah 3 sampai 5)</td></tr>
+</table></div>
+
+<h2 id="rp1">1. Problem<small>Pertanyaan yang ingin dijawab</small></h2>
+<div class="card"><p><b>Pertanyaan utama:</b> Kondisi operasi dan jenis kegagalan apa yang paling sering menyebabkan mesin rusak, dan pada ambang berapa risikonya naik?</p>
+<p>Rancangan memecahnya menjadi 14 pertanyaan (9 Utama, 4 Pendukung, 1 Tambahan) dalam 5 tema: kegagalan, kondisi, aturan ambang, penerapan, serta data dan validitas.</p></div>
+
+<h2 id="rp2">2. Data<small>Sumber, ukuran, dan perlakuan awal</small></h2>
+<div class="card"><ul class="tight"><li>Sumber data: <a href="https://archive.ics.uci.edu/dataset/601" target="_blank" rel="noopener">here</a> (Versi: UCI 2020, Tanggal akses: 24 Oktober 2026)</li><li>Ukuran (perkiraan, <b>belum diverifikasi</b>): ±10.000 baris, 14 kolom, sekitar 3% run berlabel gagal. Angka ini dicek saat data diunduh.</li><li>Data sintetis: dibuat penyusun dataset untuk meniru kondisi mesin nyata. Semua angka dampak diberi label <code>simulated</code>.</li><li>Lisensi: CC BY 4.0 (halaman UCI, dicek 28 Oktober 2026). Sitasi: AI4I 2020 Predictive Maintenance Dataset [Dataset]. (2020). UCI Machine Learning Repository. https://doi.org/10.24432/C5HS5C. Data sintetis, bukan dari mesin nyata.</li><li>Data mentah tidak di-commit ke repository. Cara mengunduhnya akan ditulis di <code>data/README.md</code>.</li><li>Rencana tabel: <code>raw_ai4i</code>, <code>features</code>, <code>failure_mode_long</code>, <code>rule_eval</code>.</li></ul></div>
+
+<h2 id="rp3">3. Analysis<small>Hasil perhitungan dari data</small></h2>
+<div class="card"><p>Belum dikerjakan. Setiap aturan ambang dinilai dengan precision, recall, dan proporsi peringatan, lalu dibandingkan dengan baseline yang tidak pernah memberi peringatan.</p>
+<p>Hipotesis yang akan diuji (belum terbukti): 1. Failure rate naik tajam setelah tool wear melewati sekitar 200 menit. 2. Tipe produk L lebih sering gagal dibanding tipe M dan H. 3. Selisih suhu proses dan udara yang kecil, ditambah putaran rendah, terkait dengan kegagalan panas. 4. Power yang terlalu rendah atau terlalu tinggi terkait dengan kegagalan daya. 5. Kombinasi torque tinggi dan tool wear tinggi mendahului overstrain, dengan batas yang berbeda per tipe produk.</p></div>
+
+<h2 id="rp4">4. Recommendation<small>Tindakan yang disarankan dari temuan</small></h2>
+<div class="card"><p>Belum dikerjakan. Output yang direncanakan: usulan jadwal inspeksi dan penggantian alat berdasarkan ambang tool wear dan torque, beserta trade-off-nya.</p></div>
+
+<h2 id="rp5">5. Impact<small>Seberapa besar manfaatnya</small></h2>
+<div class="card"><p>Belum dikerjakan. Rumus yang akan dipakai (semua hasil diberi label <code>estimated</code> dan <code>simulated</code>):</p>
+<pre><code>Downtime terhindari = (failure rate lama − failure rate baru) × jumlah run × biaya per kejadian</code></pre>
+<p>Asumsi biaya per kejadian ditulis eksplisit, bukan angka nyata.</p></div>
+
+<h2 id="rp6">6. Batasan yang sudah diketahui<small>Hal yang perlu diwaspadai saat membaca hasil</small></h2>
+<div class="card"><ul class="tight"><li>Data sintetis, polanya bisa lebih rapi dari kondisi nyata.</li><li>Kegagalan sangat jarang, sehingga akurasi tinggi tidak berarti aturan berguna.</li><li>Satu run bisa punya lebih dari satu jenis kegagalan, dan kegagalan acak (RNF) tidak bisa diprediksi.</li><li>Pola belum tentu penyebab; ambang perlu diuji di lapangan.</li></ul></div>
+</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id),f1=v=>(v*100).toFixed(1).replace('.',',')+'%';
+// Model contoh: 10.000 run, tool wear rata 0–253 menit, 339 gagal: 180 tersebar merata, 159 terkumpul di tool wear 190–253
+const N=1e4,W=253,FU=180,FC=159,F=FU+FC,BASE=(N-F)/N,TS=[150,160,170,180,190,200,210,220,230,240];
+function ev(T){const al=N*(W-T)/W,tp=FU*(W-T)/W+FC*Math.min(1,(W-Math.max(T,190))/63),fp=al-tp,fn=F-tp;return{acc:(N-fp-fn)/N,rec:tp/F,share:al/N,prec:tp/al}}
+const pos=v=>Math.max(0,(v-.5)/.5*100);
+function draw(){const T=+$('sl').value;$('slo').textContent=T;const e=ev(T);
+$('bars').innerHTML=TS.map(t=>{const a=ev(t).acc;return `<div class="row${t==T?' sel':''}"><span class="n">≥ ${t} menit</span><span class="tr"><span class="b" style="width:${pos(a)}%"></span><span class="bl" style="left:${pos(BASE)}%"></span></span><span class="c">${f1(a)}</span></div>`}).join('');
+$('r1').textContent=f1(e.acc);$('r2').textContent=f1(e.rec);$('r3').textContent=f1(e.share);
+$('ins').innerHTML=`Baseline yang tidak pernah memberi peringatan punya akurasi <b>${f1(BASE)}</b>, tetapi recall-nya 0%: tidak ada satu pun kegagalan yang tertangkap. Ambang <b>${T} menit</b> akurasinya lebih rendah (${f1(e.acc)}), namun menangkap <b>${f1(e.rec)}</b> kegagalan dengan memberi peringatan pada ${f1(e.share)} run. Precision-nya ${f1(e.prec)}: ${e.prec<.1?'sebagian besar peringatan adalah inspeksi yang ternyata belum perlu, dan inilah trade-off yang harus dipilih':'peringatan cukup tepat sasaran'}.`}
+$('sl').oninput=draw;draw();
+const G=[["predictive maintenance","i","Perawatan berdasarkan kondisi mesin, dilakukan sebelum kerusakan terjadi, bukan setelahnya."],["failure rate","i","Persentase run mesin yang gagal.\nRumus: failure rate = run gagal ÷ total run.\nContoh: 34 gagal dari 1.000 run, failure rate = 3,4%."],["failure mode","i","Jenis kegagalan, misalnya alat aus atau beban berlebih."],["tool wear","i","Lama alat potong sudah dipakai, dalam menit. Makin lama, makin aus."],["torque","i","Gaya putar pada poros mesin, dalam newton meter (Nm)."],["rotational speed","i","Kecepatan putar poros mesin, dalam putaran per menit (rpm)."],["rpm","","Revolutions per minute: jumlah putaran per menit."],["power","i","Daya mekanik mesin.\nRumus: power (W) = torque (Nm) × kecepatan sudut (rad/s), dengan kecepatan sudut = rpm × 2π ÷ 60."],["selisih suhu","i","Perbedaan suhu proses dan suhu udara.\nRumus: selisih suhu = process temperature − air temperature (K)."],["precision","i","Dari semua peringatan, berapa yang benar-benar diikuti kegagalan.\nRumus: precision = TP ÷ (TP + FP)."],["recall","i","Dari semua kegagalan, berapa yang tertangkap peringatan.\nRumus: recall = TP ÷ (TP + FN)."],["akurasi","i","Persentase run yang ditebak benar, baik gagal maupun tidak.\nRumus: akurasi = (TP + TN) ÷ total run.\nMenyesatkan jika kegagalan sangat jarang."],["baseline","i","Pembanding paling sederhana, di sini aturan yang tidak pernah memberi peringatan."],["proporsi peringatan","i","Persentase run yang diberi peringatan oleh aturan.\nRumus: proporsi peringatan = (TP + FP) ÷ total run."],["aturan ambang","i","Aturan sederhana berbentuk batas, misalnya beri peringatan jika tool wear ≥ 200 menit."],["ambang","i","Nilai batas yang memicu peringatan."],["downtime","i","Waktu mesin berhenti dan tidak berproduksi."],["downtime terhindari","i","Estimasi kejadian mesin berhenti yang bisa dicegah.\nRumus: downtime terhindari = (failure rate lama − failure rate baru) × jumlah run × biaya per kejadian."],["TWF","","Tool Wear Failure: kegagalan karena alat potong sudah terlalu aus."],["HDF","","Heat Dissipation Failure: kegagalan karena panas proses tidak terbuang dengan baik."],["PWF","","Power Failure: kegagalan karena daya terlalu rendah atau terlalu tinggi."],["OSF","","Overstrain Failure: kegagalan karena beban berlebih, kombinasi torque dan tool wear yang tinggi."],["RNF","","Random Failure: kegagalan acak yang tidak terkait kondisi operasi."],["overstrain","i","Beban berlebih pada alat atau mesin."],["confidence interval","i","Rentang nilai yang kemungkinan besar memuat nilai sebenarnya, misalnya 95%."],["bucket","i","Kelompok rentang nilai, misalnya tool wear 0–50, 51–100 menit."],["heatmap","i","Tabel warna yang menunjukkan nilai per kombinasi dua variabel."],["fitur turunan","i","Kolom baru yang dihitung dari kolom lain, misalnya power dari torque dan rpm."],["data sintetis","i","Data buatan yang meniru kondisi nyata, bukan hasil pencatatan langsung."],["sintetis","i","Dibuat secara buatan untuk meniru kondisi nyata."],["SQL","","Bahasa untuk meminta dan mengolah data dari tabel database."],["DuckDB","i","Database ringan dalam satu file, untuk menjalankan SQL tanpa server."],["dashboard","i","Halaman ringkasan interaktif berisi grafik dan angka kunci."],["Streamlit","i","Alat untuk membuat dashboard web memakai Python."],["trade-off","i","Pilihan yang saling bertentangan: menaikkan satu hal berarti mengorbankan hal lain."],["kamus data","i","Dokumen yang menjelaskan arti, satuan, dan contoh isi setiap kolom."],["README","","Dokumen penjelasan project yang dibaca pertama kali di repositori GitHub."],["Pareto","i","Cara mengurutkan masalah dari yang paling sering. Biasanya sedikit jenis masalah menyumbang sebagian besar kejadian."]];
+
+const TERMS=G.map(([t,f,d])=>({t,d,re:new RegExp('(?<![\\w-])'+t.replace(/[.*+?^${}()|[\]\\\/-]/g,'\\$&')+'(?![\\w-])',f)}));
+const SK='svg,.fx,.fbar,.oh,.wb,table td:first-child,h1,h2,h3,nav,button,script,style,summary,.tm,.tag,.pri,.pill,.v,.l,.chip,.flow,th,#tip,.banner,.theme,.phase,.add,.tools b,b.t,code,.ctl,.res,#bars,#ins,#chart';
+function wrapT(n,seen){let b=null;for(const x of TERMS){if(seen.has(x.t))continue;const m=x.re.exec(n.data);if(m&&(!b||m.index<b.i||(m.index==b.i&&m[0].length>b.l)))b={x,i:m.index,l:m[0].length}}
+if(!b)return;seen.add(b.x.t);const r=n.splitText(b.i),a=r.splitText(b.l),s=document.createElement('span');s.className='tm';s.tabIndex=0;s.dataset.d=b.x.d;s.textContent=r.data;r.replaceWith(s);wrapT(a,seen)}
+function hl(root,seen){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest(SK)?3:1}),ns=[];while(w.nextNode())ns.push(w.currentNode);ns.forEach(n=>wrapT(n,seen))}
+const tip=document.createElement('div');tip.id='tip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);
+function showT(e){tip.textContent=e.dataset.d;tip.style.display='block';const r=e.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';tip.style.top=(r.bottom+h+12>innerHeight?r.top-h-6:r.bottom+6)+'px'}
+document.addEventListener('click',ev=>{const t=ev.target.closest('.tm');t?showT(t):tip.style.display='none'});
+document.addEventListener('mouseover',ev=>{const t=ev.target.closest('.tm');if(t)showT(t)});
+document.addEventListener('mouseout',ev=>{if(ev.target.closest&&ev.target.closest('.tm'))tip.style.display='none'});
+document.addEventListener('focusin',ev=>{const t=ev.target.closest&&ev.target.closest('.tm');if(t)showT(t)});
+addEventListener('scroll',()=>tip.style.display='none',{passive:true});
+const qg=$('qg');document.querySelector('.fbar').onclick=e=>{const b=e.target.closest('.fb');if(!b)return;const f=b.dataset.f;
+document.querySelectorAll('.fb').forEach(x=>x.classList.toggle('on',x==b));let th=null,vis=0;
+[...qg.children].forEach(el=>{if(el.classList.contains('theme')){if(th)th.hidden=!vis;th=el;vis=0}else{const show=f=='*'||el.dataset.p==f;el.hidden=!show;if(show)vis++}});if(th)th.hidden=!vis};
+let seen=new Set();document.querySelectorAll('main>.pane>*').forEach(el=>{if(el.tagName=='H2')seen=new Set();hl(el,seen)});
+
+const TB=[...document.querySelectorAll('.tab')];
+function setTab(t){document.querySelectorAll('.pane,.links').forEach(e=>e.hidden=e.dataset.tab!==t);TB.forEach(x=>{const on=x.dataset.t===t;x.classList.toggle('on',on);x.setAttribute('aria-expanded',on)})}
+function route(){const h=decodeURIComponent(location.hash.slice(1)),el=h&&document.getElementById(h);
+if(h=='design'||h=='report'){setTab(h);scrollTo(0,0);return}
+if(el){const p=el.closest('.pane');if(p){setTab(p.dataset.tab);el.scrollIntoView()}}}
+TB.forEach(x=>x.onclick=()=>{location.hash=x.dataset.t});
+addEventListener('hashchange',route);route();
+</script>
+</body></html>

@@ -1,0 +1,3 @@
+kelompok,n_L,gagal_L,rate_L,n_MH,gagal_MH,rate_MH,p_fisher
+tool wear < 200,5497,143,0.02601419,3702,73,0.01971907,0.05776872
+tool wear >= 200,503,92,0.18290258,298,31,0.10402685,0.00315224

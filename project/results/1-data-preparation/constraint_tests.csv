@@ -1,0 +1,11 @@
+test,outcome
+type di luar L/M/H,ditolak
+udi ganda,ditolak
+product_id ganda,ditolak
+suhu udara tidak masuk akal,ditolak
+rpm nol,ditolak
+torque negatif,ditolak
+tool wear negatif,ditolak
+machine_failure bukan 0/1,ditolak
+flag jenis kegagalan bukan 0/1,ditolak
+kolom wajib kosong,ditolak

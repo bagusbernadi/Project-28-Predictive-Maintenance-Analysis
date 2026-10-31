@@ -1,0 +1,7 @@
+model,period,tp,fp,fn,tn,precision,recall,alert_share,accuracy,f1
+pohon keputusan kedalaman 3,train,126,0,111,6763,1.0,0.53164557,0.018,0.98414286,0.69421488
+pohon keputusan kedalaman 3,test,52,2,50,2896,0.96296296,0.50980392,0.018,0.98266667,0.66666667
+pohon keputusan kedalaman 3,all,178,2,161,9659,0.98888889,0.52507375,0.018,0.9837,0.68593449
+"pohon keputusan kedalaman 3, bobot seimbang",train,214,755,23,6008,0.22084623,0.90295359,0.13842857,0.88885714,0.35489221
+"pohon keputusan kedalaman 3, bobot seimbang",test,89,300,13,2598,0.22879177,0.87254902,0.12966667,0.89566667,0.36252546
+"pohon keputusan kedalaman 3, bobot seimbang",all,303,1055,36,8606,0.22312224,0.89380531,0.1358,0.8909,0.35710077

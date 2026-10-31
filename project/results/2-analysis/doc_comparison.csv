@@ -1,0 +1,9 @@
+komponen,dokumentasi_uci,hasil_data,kecocokan
+TWF: rentang tool wear,200 sampai 240 menit (dipilih acak),198 sampai 253 menit (median 214),Sesuai
+TWF: jumlah kasus,"120 kasus (69 penggantian, 51 kegagalan)",46 baris dengan TWF = 1,Berbeda
+HDF: selisih suhu dan rpm,selisih suhu < 8.6 K dan rpm < 1380,terbaik di data: selisih suhu < 8.6 K dan rpm < 1380 (F1 1.000); aturan dokumentasi F1 1.000,Sesuai
+PWF: rentang power,di bawah 3500 W atau di atas 9000 W,terbaik di data: di bawah 3500 W atau di atas 9000 W (F1 1.000); aturan dokumentasi F1 1.000,Sesuai
+OSF tipe L: tool wear x torque,di atas 11000 minNm,terbaik di data: 11000 minNm (87 kasus OSF); aturan dokumentasi F1 1.000,Sesuai
+OSF tipe M: tool wear x torque,di atas 12000 minNm,terbaik di data: 12000 minNm (9 kasus OSF); aturan dokumentasi F1 1.000,Sesuai
+OSF tipe H: tool wear x torque,di atas 13000 minNm,terbaik di data: 12000 minNm (2 kasus OSF); aturan dokumentasi F1 1.000,Sebagian
+RNF: jumlah kasus,"5 kasus (peluang 0,1% per proses)",19 baris RNF = 1; hanya 1 di antaranya machine_failure = 1,Berbeda

@@ -1,0 +1,28 @@
+udi,type,machine_failure,twf,hdf,pwf,osf,rnf,masalah
+1222,M,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+1303,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+1438,H,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+1749,H,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+2073,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+2560,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+2750,M,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+3066,M,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+3453,H,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+4045,M,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+4685,M,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+5472,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+5490,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+5496,H,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+5510,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+5537,M,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+5554,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+5640,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+5942,L,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+6092,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+6479,L,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+6914,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+6961,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+7489,L,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+7869,H,0,0,0,0,0,1,jenis kegagalan tanpa label gagal
+8507,L,1,0,0,0,0,0,gagal tanpa jenis kegagalan
+9016,L,1,0,0,0,0,0,gagal tanpa jenis kegagalan
